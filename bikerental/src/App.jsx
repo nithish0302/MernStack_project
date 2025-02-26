@@ -1,9 +1,11 @@
-import { useState } from "react";
-import "./App.css";
-import "./Components";
+import CustomerFrontPage from "./Components/CustomerFrontPage";
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <CustomerFrontPage />
+    </>
+  );
 }
 
 export default App;
