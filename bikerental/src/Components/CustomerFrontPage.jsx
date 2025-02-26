@@ -1,10 +1,11 @@
 import "../App.css";
 import { useState } from "react";
-import toyota from "../assets/toyota.jpg";
-import benz from "../assets/benz.jpg";
-import bmw from "../assets/bmw.svg";
-import suzuki from "../assets/suzuki-seeklogo.png";
-import audi from "../assets/audi-seeklogo.png";
+// import toyota from "../assets/toyota.jpg";
+import image from "../assets/imageindex.js";
+import benz from "../assets/benz.avif";
+import bmw from "../assets/bmw.avif";
+import suzuki from "../assets/suzuki-seeklogo.avif";
+import audi from "../assets/audi-seeklogo.avif";
 import { CgArrowTopRight } from "react-icons/cg";
 export default function CustomerFrontPage() {
   return (
@@ -22,11 +23,11 @@ export default function CustomerFrontPage() {
       <br />
       <hr />
       <div className="logos">
-        <img src={toyota} alt="image" className="logo" />
+        <img src={image.image1} alt="image" className="logo" />
         <span className="vertical-line"></span>
         <img src={bmw} alt="image" className="logo" />
         <span className="vertical-line"></span>
-        <img src={benz} alt="image" className="logo" />
+        <img src={image.image3} alt="image" className="logo" />
         <span className="vertical-line"></span>
         <img src={suzuki} alt="image" className="logo" />
         <span className="vertical-line"></span>
@@ -66,7 +67,7 @@ function VehicleSelector() {
 
 const vehiclesData = [
   {
-    type: "Bike",
+    type: "Z900",
     imageUrl: "https://example.com/bike.jpg",
     fuelType: "Petrol",
     gearType: "Manual",
@@ -74,15 +75,15 @@ const vehiclesData = [
     pricePerDay: 1500,
   },
   {
-    type: "Scooter",
+    type: "BMW 1000 RR",
     imageUrl: "https://example.com/scooter.jpg",
-    fuelType: "Electric",
-    gearType: "Automatic",
+    fuelType: "Petrol",
+    gearType: "Manual",
     seats: 2,
     pricePerDay: 1550,
   },
   {
-    type: "Cruiser Bike",
+    type: "Duke",
     imageUrl: "https://example.com/cruiser-bike.jpg",
     fuelType: "Petrol",
     gearType: "Manual",
@@ -90,15 +91,15 @@ const vehiclesData = [
     pricePerDay: 1600,
   },
   {
-    type: "Electric Bike",
+    type: "HarleyDavison",
     imageUrl: "https://example.com/electric-bike.jpg",
-    fuelType: "Electric",
-    gearType: "Automatic",
+    fuelType: "Petrol",
+    gearType: "Manula",
     seats: 2,
     pricePerDay: 1650,
   },
   {
-    type: "Hatchback Car",
+    type: "Hunter350",
     imageUrl: "https://example.com/hatchback.jpg",
     fuelType: "Petrol",
     gearType: "Manual",
@@ -106,7 +107,7 @@ const vehiclesData = [
     pricePerDay: 1750,
   },
   {
-    type: "Sedan",
+    type: "Nissan Qashqai",
     imageUrl: "https://example.com/sedan.jpg",
     fuelType: "Diesel",
     gearType: "Automatic",
@@ -114,7 +115,7 @@ const vehiclesData = [
     pricePerDay: 1800,
   },
   {
-    type: "SUV",
+    type: "Range Rover Velar",
     imageUrl: "https://example.com/suv.jpg",
     fuelType: "Diesel",
     gearType: "Automatic",
@@ -122,7 +123,7 @@ const vehiclesData = [
     pricePerDay: 1900,
   },
   {
-    type: "Convertible",
+    type: "BMW M8 Competition",
     imageUrl: "https://example.com/convertible.jpg",
     fuelType: "Petrol",
     gearType: "Automatic",
@@ -130,7 +131,7 @@ const vehiclesData = [
     pricePerDay: 1950,
   },
   {
-    type: "Pickup Truck",
+    type: "swift",
     imageUrl: "https://example.com/pickup-truck.jpg",
     fuelType: "Diesel",
     gearType: "Manual",
