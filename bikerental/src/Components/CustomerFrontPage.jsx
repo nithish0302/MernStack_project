@@ -1,10 +1,15 @@
 import "../App.css";
 import { useState } from "react";
+import toyota from "../assets/toyota.jpg";
+import benz from "../assets/benz.jpg";
+import bmw from "../assets/bmw.svg";
+import suzuki from "../assets/suzuki-seeklogo.png";
+import audi from "../assets/audi-seeklogo.png";
 
 export default function CustomerFrontPage() {
   return (
-    <div className="Customertop">
-      <div>
+    <>
+      <div className="Customertop">
         <h3 className="textInPage">
           Experience the freedom to go anywhere, anytime, with our affordable,
           reliable, and well-maintained vehicles—your perfect travel companion
@@ -12,17 +17,29 @@ export default function CustomerFrontPage() {
         </h3>
         <VehicleSelector />
       </div>
-    </div>
+      <h3 className="drive">Drive the Vechile By Your Favourite Brand</h3>
+      <br />
+      <br />
+      <hr />
+      <div className="logos">
+        <img src={toyota} alt="image" className="logo" />
+        <span className="vertical-line"></span>
+        <img src={bmw} alt="image" className="logo" />
+        <span className="vertical-line"></span>
+        <img src={benz} alt="image" className="logo" />
+        <span className="vertical-line"></span>
+        <img src={suzuki} alt="image" className="logo" />
+        <span className="vertical-line"></span>
+        <img src={audi} alt="image" className="logo" />
+      </div>
+      <br />
+      <hr />
+    </>
   );
 }
 
 function VehicleSelector() {
   const [selectedOption, setSelectedOption] = useState("");
-
-  function handleSelection(e) {
-    setSelectedOption(e.target.value);
-    console.log(e.target.value);
-  }
 
   return (
     <div>
@@ -32,7 +49,7 @@ function VehicleSelector() {
       <select
         id="vehicleType"
         value={selectedOption}
-        onChange={handleSelection}
+        onChange={(e) => setSelectedOption(e.target.value)}
         className="ChooseYourType"
       >
         <option value="" disabled>
