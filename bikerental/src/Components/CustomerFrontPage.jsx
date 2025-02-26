@@ -1,16 +1,13 @@
 import "../App.css";
 import { useState } from "react";
-// import toyota from "../assets/toyota.jpg";
 import image from "../assets/imageindex.js";
-import benz from "../assets/benz.avif";
-import bmw from "../assets/bmw.avif";
-import suzuki from "../assets/suzuki-seeklogo.avif";
-import audi from "../assets/audi-seeklogo.avif";
 import { CgArrowTopRight } from "react-icons/cg";
+import Header from "./Header.jsx";
 export default function CustomerFrontPage() {
   return (
     <>
       <div className="Customertop">
+        <Header />
         <h3 className="textInPage">
           Experience the freedom to go anywhere, anytime, with our affordable,
           reliable, and well-maintained vehicles—your perfect travel companion
@@ -25,13 +22,13 @@ export default function CustomerFrontPage() {
       <div className="logos">
         <img src={image.image1} alt="image" className="logo" />
         <span className="vertical-line"></span>
-        <img src={bmw} alt="image" className="logo" />
-        <span className="vertical-line"></span>
         <img src={image.image3} alt="image" className="logo" />
         <span className="vertical-line"></span>
-        <img src={suzuki} alt="image" className="logo" />
+        <img src={image.image2} alt="image" className="logo" />
         <span className="vertical-line"></span>
-        <img src={audi} alt="image" className="logo" />
+        <img src={image.image14} alt="image" className="logo" />
+        <span className="vertical-line"></span>
+        <img src={image.image13} alt="image" className="logo" />
       </div>
       <br />
       <hr style={{ marginBottom: "40px" }} />
@@ -68,7 +65,7 @@ function VehicleSelector() {
 const vehiclesData = [
   {
     type: "Z900",
-    imageUrl: "https://example.com/bike.jpg",
+    imageUrl: image.image12,
     fuelType: "Petrol",
     gearType: "Manual",
     seats: 2,
@@ -76,7 +73,7 @@ const vehiclesData = [
   },
   {
     type: "BMW 1000 RR",
-    imageUrl: "https://example.com/scooter.jpg",
+    imageUrl: image.image4,
     fuelType: "Petrol",
     gearType: "Manual",
     seats: 2,
@@ -84,7 +81,7 @@ const vehiclesData = [
   },
   {
     type: "Duke",
-    imageUrl: "https://example.com/cruiser-bike.jpg",
+    imageUrl: image.image6,
     fuelType: "Petrol",
     gearType: "Manual",
     seats: 2,
@@ -92,7 +89,7 @@ const vehiclesData = [
   },
   {
     type: "HarleyDavison",
-    imageUrl: "https://example.com/electric-bike.jpg",
+    imageUrl: image.image7,
     fuelType: "Petrol",
     gearType: "Manula",
     seats: 2,
@@ -100,7 +97,7 @@ const vehiclesData = [
   },
   {
     type: "Hunter350",
-    imageUrl: "https://example.com/hatchback.jpg",
+    imageUrl: image.image8,
     fuelType: "Petrol",
     gearType: "Manual",
     seats: 4,
@@ -108,7 +105,7 @@ const vehiclesData = [
   },
   {
     type: "Nissan Qashqai",
-    imageUrl: "https://example.com/sedan.jpg",
+    imageUrl: image.image9,
     fuelType: "Diesel",
     gearType: "Automatic",
     seats: 5,
@@ -116,7 +113,7 @@ const vehiclesData = [
   },
   {
     type: "Range Rover Velar",
-    imageUrl: "https://example.com/suv.jpg",
+    imageUrl: image.image10,
     fuelType: "Diesel",
     gearType: "Automatic",
     seats: 7,
@@ -124,15 +121,15 @@ const vehiclesData = [
   },
   {
     type: "BMW M8 Competition",
-    imageUrl: "https://example.com/convertible.jpg",
+    imageUrl: image.image5,
     fuelType: "Petrol",
     gearType: "Automatic",
     seats: 4,
     pricePerDay: 1950,
   },
   {
-    type: "swift",
-    imageUrl: "https://example.com/pickup-truck.jpg",
+    type: "Swift",
+    imageUrl: image.image11,
     fuelType: "Diesel",
     gearType: "Manual",
     seats: 5,

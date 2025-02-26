@@ -1,9 +1,35 @@
-// export { default as CustomerFrontPage } from "./CustomerFrontPage";
+import BentleyBentayga from "../assets/BentleyBentayga.avif";
+import benz from "../assets/benz.avif";
+import bmw from "../assets/bmw.avif";
+import BMW1000RR from "../assets/BMW1000RR.avif";
+import BMWM8 from "../assets/BMWM8.avif";
+import Duke from "../assets/Duke.avif";
+import HarleyDavison from "../assets/HarleyDavison.avif";
+import Hunter350 from "../assets/Hunter350.avif";
+import NissanQashqai from "../assets/NissanQashqai.avif";
+import RangeRoverVelar from "../assets/RangeRoverVelar.avif";
+import swift from "../assets/swift.avif";
+import toyota from "../assets/toyota.avif";
+import Z900 from "../assets/Z900.avif";
+import audi from "../assets/audi-seeklogo.avif";
+import suzuki from "../assets/suzuki-seeklogo.avif";
+
 const image = {
-  image1: "./toyota.avif",
-  image2: "./assets/benz.avif",
-  image3:
-    "https://www.bing.com/images/search?view=detailV2&ccid=V1kRKFUU&id=7570270851AB5DB24B55FC5C9150B3EB3A37F397&thid=OIP.V1kRKFUUgSfW5_fAfzaBVwHaCB&mediaurl=https%3a%2f%2fvectorization.eu%2fimage_file_converter_avif_addition%2fimg%2favif-converter.jpg&exph=300&expw=1100&q=image+convetor+to+avif+free&simid=607986728107472998&FORM=IRPRST&ck=550B4025B7F99579CD57948EEB9E16BF&selectedIndex=1&itb=0",
+  image1: toyota,
+  image2: benz,
+  image3: bmw,
+  image4: BMW1000RR,
+  image5: BMWM8,
+  image6: Duke,
+  image7: HarleyDavison,
+  image8: Hunter350,
+  image9: NissanQashqai,
+  image10: RangeRoverVelar,
+  image11: swift,
+  image12: Z900,
+  image13: audi,
+  image14: suzuki,
+  image15: BentleyBentayga,
 };
 
 export default image;
