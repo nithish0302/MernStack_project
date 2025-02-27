@@ -1,11 +1,11 @@
 import CustomerFrontPage from "./Components/CustomerFrontPage";
-import SignIn from "./Components/SignIn";
+import SignUp from "./Components/SignUp";
 function App() {
   return (
     <>
       {/* <CustomerFrontPage />
        */}
-      <SignIn />
+      <SignUp />
     </>
   );
 }

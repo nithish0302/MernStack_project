@@ -73,6 +73,7 @@
   font-size: 16px;
   height: 45px;
 }
+
 .forgot-password {
   color: grey;
 }
@@ -84,6 +85,7 @@
   margin: 15px 0;
   font-size: 14px;
   color: grey;
+  font-family: "Radio Canada", sans-serif;
 }
 
 .social-login {
@@ -107,4 +109,8 @@
   margin-right: 0px;
   margin-left: 95px;
   color: grey;
+  font-family: "Radio Canada", sans-serif;
+}
+.signup-link:hover {
+  text-decoration: underline;
 }
