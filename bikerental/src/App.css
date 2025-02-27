@@ -130,11 +130,12 @@ hr {
 .vehicle-content {
   padding: 15px;
   text-align: center;
+  font-family: "Radio Canada", serif;
 }
 
 .vehicle-title {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 10px;
 }
 
@@ -144,6 +145,7 @@ hr {
   font-size: 14px;
   color: #555;
   margin-bottom: 10px;
+  font-family: "Radio Canada", serif;
 }
 
 .vehicle-footer {

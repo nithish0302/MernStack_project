@@ -1,8 +1,9 @@
 import "../App.css";
 import { useState } from "react";
-import image from "../assets/imageindex.js";
-import { CgArrowTopRight } from "react-icons/cg";
 import Header from "./Header.jsx";
+import image from "../assets/imageindex.js";
+import VehicleCardComponent from "../Components/VechileCardComponenet.jsx";
+
 export default function CustomerFrontPage() {
   return (
     <>
@@ -61,10 +62,10 @@ function VehicleSelector() {
     </div>
   );
 }
-
 const vehiclesData = [
   {
-    type: "Z900",
+    name: "Z900",
+    type: "Bike",
     imageUrl: image.image12,
     fuelType: "Petrol",
     gearType: "Manual",
@@ -72,7 +73,8 @@ const vehiclesData = [
     pricePerDay: 1500,
   },
   {
-    type: "BMW 1000 RR",
+    name: "BMW 1000 RR",
+    type: "Bike",
     imageUrl: image.image4,
     fuelType: "Petrol",
     gearType: "Manual",
@@ -80,7 +82,8 @@ const vehiclesData = [
     pricePerDay: 1550,
   },
   {
-    type: "Duke",
+    name: "Duke",
+    type: "Bike",
     imageUrl: image.image6,
     fuelType: "Petrol",
     gearType: "Manual",
@@ -88,15 +91,17 @@ const vehiclesData = [
     pricePerDay: 1600,
   },
   {
-    type: "HarleyDavison",
+    name: "Harley Davidson",
+    type: "Bike",
     imageUrl: image.image7,
     fuelType: "Petrol",
-    gearType: "Manula",
+    gearType: "Manual",
     seats: 2,
     pricePerDay: 1650,
   },
   {
-    type: "Hunter350",
+    name: "Hunter 350",
+    type: "Bike",
     imageUrl: image.image8,
     fuelType: "Petrol",
     gearType: "Manual",
@@ -104,7 +109,8 @@ const vehiclesData = [
     pricePerDay: 1750,
   },
   {
-    type: "Nissan Qashqai",
+    name: "Nissan Qashqai",
+    type: "Car",
     imageUrl: image.image9,
     fuelType: "Diesel",
     gearType: "Automatic",
@@ -112,7 +118,8 @@ const vehiclesData = [
     pricePerDay: 1800,
   },
   {
-    type: "Range Rover Velar",
+    name: "Range Rover Velar",
+    type: "Car",
     imageUrl: image.image10,
     fuelType: "Diesel",
     gearType: "Automatic",
@@ -120,7 +127,8 @@ const vehiclesData = [
     pricePerDay: 1900,
   },
   {
-    type: "BMW M8 Competition",
+    name: "BMW M8 Competition",
+    type: "Car",
     imageUrl: image.image5,
     fuelType: "Petrol",
     gearType: "Automatic",
@@ -128,7 +136,8 @@ const vehiclesData = [
     pricePerDay: 1950,
   },
   {
-    type: "Swift",
+    name: "Swift",
+    type: "Car",
     imageUrl: image.image11,
     fuelType: "Diesel",
     gearType: "Manual",
@@ -136,30 +145,11 @@ const vehiclesData = [
     pricePerDay: 2000,
   },
 ];
-
 function Vehicle() {
   return (
     <div className="vehicle-container">
       {vehiclesData.map((vc, index) => (
-        <div key={index} className="vehicle-card">
-          <img src={vc.imageUrl} alt={vc.type} className="vehicle-image" />
-          <div className="vehicle-content">
-            <h3 className="vehicle-title">{vc.type}</h3>
-            <hr />
-            <div className="vehicle-specs">
-              <p>⛽ {vc.fuelType}</p>
-              <p>⚙️ {vc.gearType}</p>
-              <p>🛋️ {vc.seats} Seats</p>
-            </div>
-            <hr />
-            <div className="vehicle-footer">
-              <p className="vehicle-price">Rs {vc.pricePerDay}/day</p>
-              <button className="vehicle-button">
-                View Details <CgArrowTopRight />
-              </button>
-            </div>
-          </div>
-        </div>
+        <VehicleCardComponent vc={vc} key={index} />
       ))}
     </div>
   );
