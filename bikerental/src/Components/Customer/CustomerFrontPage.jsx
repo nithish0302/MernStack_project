@@ -1,8 +1,9 @@
-import "../App.css";
+import "../../App.css";
 import { useState } from "react";
-import Header from "./Header.jsx";
-import image from "../assets/imageindex.js";
-import VehicleCardComponent from "../Components/VechileCardComponenet.jsx";
+import { useNavigate } from "react-router-dom";
+import Header from "../General/Header.jsx";
+import image from "../../assets/imageindex.js";
+import VehicleCardComponent from "../General/VechileCardComponenet.jsx";
 
 export default function CustomerFrontPage() {
   return (
@@ -16,7 +17,7 @@ export default function CustomerFrontPage() {
         </h3>
         <VehicleSelector />
       </div>
-      <h3 className="drive">Drive the Vechile By Your Favourite Brand</h3>
+      <h3 className="drive">Drive the Vehicle By Your Favourite Brand</h3>
       <br />
       <br />
       <hr />
@@ -40,7 +41,19 @@ export default function CustomerFrontPage() {
 }
 
 function VehicleSelector() {
+  const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState("");
+
+  const handleSelection = (e) => {
+    const value = e.target.value;
+    setSelectedOption(value);
+
+    if (value === "Bike") {
+      navigate("/BikePage");
+    } else if (value === "Car") {
+      navigate("/CarPage");
+    }
+  };
 
   return (
     <div>
@@ -50,7 +63,7 @@ function VehicleSelector() {
       <select
         id="vehicleType"
         value={selectedOption}
-        onChange={(e) => setSelectedOption(e.target.value)}
+        onChange={handleSelection}
         className="ChooseYourType"
       >
         <option value="" disabled>
@@ -62,6 +75,7 @@ function VehicleSelector() {
     </div>
   );
 }
+
 const vehiclesData = [
   {
     name: "Z900",
@@ -145,6 +159,7 @@ const vehiclesData = [
     pricePerDay: 2000,
   },
 ];
+
 function Vehicle() {
   return (
     <div className="vehicle-container">

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../Contact.css";
-import Header from "./Header";
+import "../../Contact.css";
+import Header from "../General/Header";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({

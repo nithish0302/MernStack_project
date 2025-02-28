@@ -1,6 +1,6 @@
 import React from "react";
-import "../AboutUs.css";
-import Header from "./Header";
+import "../../AboutUs.css";
+import Header from "../General/Header";
 
 export default function AboutUs() {
   return (

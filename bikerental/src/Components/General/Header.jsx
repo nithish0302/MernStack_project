@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
-import "../Header.css";
-import logo from "../assets/logo.avif";
+import "../../Header.css";
+import logo from "../../assets/logo.avif";
 
 export default function Header() {
   return (
@@ -9,7 +9,7 @@ export default function Header() {
         <img src={logo} alt="Logo" className="logo" />
       </div>
       <div className="nav-links">
-        <NavLink to="/" className="header-btn">
+        <NavLink to="/customer" className="header-btn">
           Home
         </NavLink>
         <NavLink to="/carPage" className="header-btn">

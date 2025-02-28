@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Header from "./Header";
-import "../Order.css";
-import logo from "../assets/Logo.avif";
+import Header from "../General/Header";
+import "../../Order.css";
+import logo from "../../assets/Logo.avif";
 
 const Order = () => {
   return (

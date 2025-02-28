@@ -1,19 +1,19 @@
-import Header from "../Components/Header.jsx";
-import "../CarPage.css";
-import image from "../assets/imageindex.js";
-import VehicleCardComponent from "../Components/VechileCardComponenet.jsx";
+import Header from "./Header.jsx";
+import "../../CarPage.css";
+import image from "../../assets/imageindex.js";
+import VehicleCardComponent from "./VechileCardComponenet.jsx";
 
-export default function BikePage() {
+export default function CarPage() {
   return (
     <>
       <Header />
-      <BikeSearchBar />
+      <CarSearchBar />
       <Vehicle />
     </>
   );
 }
 
-function BikeSearchBar() {
+function CarSearchBar() {
   return (
     <div className="search-bar">
       <select className="dropdown">
@@ -148,7 +148,7 @@ function Vehicle() {
     <div className="vehicle-container">
       {vehiclesData.map(
         (vc, index) =>
-          vc.type == "Bike" && <VehicleCardComponent vc={vc} key={index} />
+          vc.type == "Car" && <VehicleCardComponent vc={vc} key={index} />
       )}
     </div>
   );

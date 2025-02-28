@@ -1,19 +1,27 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import "../SignIn&SignUp.css";
+import "../../SignIn&SignUp.css";
 import { Link } from "react-router-dom";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [agree, setAgree] = useState(false);
+  const [name, setName] = useState("");
 
   return (
     <div className="signin-background">
       <div className="login-card">
-        <h4 className="login-text">Log In to Rentals</h4>
+        <h4 className="login-text">Sign up to Rentals</h4>
         <p className="text">Quick & Simple way to Automate your payment</p>
         <div className="input-details-container">
+          <input
+            type="text"
+            placeholder="NAME"
+            className="input-detail"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
           <input
             type="email"
             placeholder="EMAIL ADDRESS"
@@ -29,27 +37,37 @@ export default function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <div className="handling-comeback  ">
-          <label>
+
+        <div className="handling-comeback input-details-container">
+          <label style={{ textDecoration: "underline" }}>
             <input
               type="checkbox"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
+              checked={agree}
+              onChange={() => setAgree(!agree)}
               className="check"
             />
-            Remember Me
+            I agree to Terms of Service and Privacy Policy
           </label>
-          <button className="forgot-password">Forgot Password?</button>
         </div>
 
-        <Link to="/" className="signin-button">
-          Sign In
+        <Link
+          to="/customer"
+          className="signin-button"
+          style={{
+            fontFamily: "Roboto, sans-serif",
+            fontWeight: "300",
+            fontSize: "20px",
+            height: "30px",
+            paddingTop: "18px",
+          }}
+        >
+          CREATE AN ACCOUNT
         </Link>
         <div className="maintain">
           <p className="or-use">OR USE</p>
-
-          <Link to="/signup" className="signup-link">
-            SIGN UP
+          {/* <p>SIGN In</p> */}
+          <Link to="/signin" className="signup-link">
+            SIGN IN
           </Link>
         </div>
         <div className="social-login">

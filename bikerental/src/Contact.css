@@ -67,3 +67,15 @@
   margin-top: 20px;
   border-radius: 10px;
 }
+.contact-container,
+.contact-title,
+.contact-subtitle,
+.contact-info,
+.contact-item,
+.contact-form,
+.contact-input,
+.contact-textarea,
+.contact-button,
+.contact-map {
+  font-family: "Radio Canada", serif;
+}

@@ -61,3 +61,15 @@
   width: 100%;
   border-radius: 8px;
 }
+.about-container,
+.about-title,
+.about-subtitle,
+.about-content,
+.about-text,
+.about-mission,
+.about-mission-title,
+.about-mission-text,
+.about-image,
+.about-img {
+  font-family: "Radio Canada", serif;
+}
