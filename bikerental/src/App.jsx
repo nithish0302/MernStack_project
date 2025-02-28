@@ -9,6 +9,7 @@ import AboutUs from "./Components/General/AboutUs";
 import ContactPage from "./Components/General/Contact";
 import ForgotPassword from "./Components/General/ForgotPass";
 import SelectionPage from "./Components/General/Home";
+import VendorFrontPAge from "./Components/Vendor/VendorFrontPAge";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/forgot" element={<ForgotPassword />} />
+        <Route path="/vendor" element={<VendorFrontPAge />}></Route>
       </Routes>
     </BrowserRouter>
   );
