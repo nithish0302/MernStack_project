@@ -1,72 +1,95 @@
+.image {
+  background-image: url("/src/assets/VendorBackGround.avif");
+  background-size: cover;
+  background-position: top;
+  height: 800px;
+  width: 100%;
+  position: relative;
+  display: inline-block;
+}
+
+.image::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.557);
+}
 .container {
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  margin-top: 50px;
+  height: 100vh;
+
+  margin: 0px;
 }
+
 .order-container {
-  max-width: 400px;
+  width: 700px;
   background-color: #2c3e50;
   color: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin: auto;
-  margin-right: 100px;
+  z-index: 2;
 }
 
 .order-header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 10px;
+  background-color: #1a252f;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 4px;
 }
 
 .logo {
-  width: 150px;
+  width: 120px;
   height: auto;
 }
 
 h2 {
-  font-size: 18px;
-  margin-left: 100px;
+  font-size: 20px;
+  color: white;
 }
 
 .order-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 15px;
+  margin: 4 px;
 }
 
 .input-group {
   display: flex;
+  justify-content: space-between;
   gap: 10px;
-  margin: 8px;
+  margin: 6px;
 }
 
 .input-group input {
   flex: 1;
 }
 
-input,
-select {
-  padding: 10px;
+.input {
+  padding: 12px;
   border-radius: 5px;
   border: none;
   font-size: 14px;
-  width: 100%;
-  margin: 5px;
+  width: 650px;
+  margin: 6px;
 }
 
-.con {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-.email {
-  width: 350px;
-}
+/* .email {
+  width: 400px;
+} */
 
 .book-button {
   background-color: #e67e22;
@@ -76,8 +99,7 @@ select {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  width: 180px;
-  display: block;
+  width: 200px;
   text-align: center;
 }
 
@@ -85,7 +107,7 @@ select {
   background-color: #d35400;
 }
 
-/* Centering the button */
+/* Button container */
 .button-container {
   display: flex;
   justify-content: center;

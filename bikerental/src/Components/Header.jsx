@@ -1,20 +1,33 @@
+import { NavLink } from "react-router-dom";
 import "../Header.css";
 import logo from "../assets/logo.avif";
 
 export default function Header() {
   return (
-    <>
-      <div className="header-container">
-        <div className="image-manage">
-          <img src={logo} alt="Logo" className="logo" />
-        </div>
-        <button className="home">Home</button>
-        <button className="car">Car</button>
-        <button className="bike">Bike</button>
-        <button className="contact">Contact</button>
-        <button className="aboutus">About Us</button>
-        <button className="signin">Sign in</button>
+    <nav className="header-container">
+      <div className="image-manage">
+        <img src={logo} alt="Logo" className="logo" />
       </div>
-    </>
+      <div className="nav-links">
+        <NavLink to="/" className="header-btn">
+          Home
+        </NavLink>
+        <NavLink to="/carPage" className="header-btn">
+          Car
+        </NavLink>
+        <NavLink to="/bikePage" className="header-btn">
+          Bike
+        </NavLink>
+        <NavLink to="/contact" className="header-btn">
+          Contact
+        </NavLink>
+        <NavLink to="/about" className="header-btn">
+          About Us
+        </NavLink>
+        <NavLink to="/signIn" className=" signin">
+          Sign In
+        </NavLink>
+      </div>
+    </nav>
   );
 }

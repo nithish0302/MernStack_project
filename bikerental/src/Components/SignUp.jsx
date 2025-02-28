@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import "../SignIn&SignUp.css";
+import { Link } from "react-router-dom";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -49,19 +50,25 @@ export default function SignIn() {
           </label>
         </div>
 
-        <button
+        <Link
+          to="/"
           className="signin-button"
           style={{
             fontFamily: "Roboto, sans-serif",
             fontWeight: "300",
             fontSize: "20px",
+            height: "30px",
+            paddingTop: "18px",
           }}
         >
           CREATE AN ACCOUNT
-        </button>
+        </Link>
         <div className="maintain">
           <p className="or-use">OR USE</p>
-          <p className="signup-link">SIGN In</p>
+          {/* <p>SIGN In</p> */}
+          <Link to="/signin" className="signup-link">
+            SIGN IN
+          </Link>
         </div>
         <div className="social-login">
           <button className="social-btn google">

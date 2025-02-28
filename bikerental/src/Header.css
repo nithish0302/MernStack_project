@@ -4,10 +4,16 @@
   justify-content: space-between;
   background-color: #e4e4e4;
   padding: 10px 20px;
-  position: relative;
-  left: 22%;
-  width: 55%;
+  width: 50%;
+  max-width: 1200px;
   border-radius: 10px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1001;
+}
+
+.image-manage {
+  flex-shrink: 0;
 }
 
 .logo {
@@ -15,28 +21,70 @@
   height: auto;
   cursor: pointer;
 }
-button {
+
+.nav-links {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  gap: 20px;
+  justify-content: space-around;
+  margin-left: 55px;
+  margin-right: 55px;
+}
+
+.header-btn {
   background: none;
   border: none;
   font-size: 16px;
   font-weight: 500;
   color: black;
   cursor: pointer;
-  margin: 0 10px;
   transition: color 0.3s ease-in-out;
+  text-decoration: none;
+  position: relative;
+  z-index: 1002;
+  font-family: "Quicksand", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  margin-top: 5px;
 }
 
-.home {
-  color: red;
+.header-btn.active {
+  color: #fd151b;
+  font-weight: 600;
+  font-size: 20px;
+}
+.header-btn.active:hover {
+  transform: none;
+  color: #fd151b;
+}
+
+.header-btn:hover {
+  color: #fc2f00;
+  transform: scale(135%);
 }
 
 .signin {
-  background-color: black;
+  font-size: 16px;
+  font-weight: 500;
   color: white;
-  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  text-decoration: none;
+  position: relative;
+  z-index: 1002;
+  font-family: "Quicksand", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  width: 80px;
+  text-align: center;
+  background-color: black;
+  padding: 8px;
+  margin-bottom: 2px;
+  text-align: center;
   border-radius: 20px;
 }
 
 .signin:hover {
-  background-color: #333;
+  transform: scale(105%);
 }

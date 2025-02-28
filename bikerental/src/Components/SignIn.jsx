@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import "../SignIn&SignUp.css";
+import { Link } from "react-router-dom";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -28,8 +29,7 @@ export default function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-
-        <div className="handling-comeback input-details-container ">
+        <div className="handling-comeback  ">
           <label>
             <input
               type="checkbox"
@@ -42,10 +42,15 @@ export default function SignIn() {
           <button className="forgot-password">Forgot Password?</button>
         </div>
 
-        <button className="signin-button">Sign In</button>
+        <Link to="/" className="signin-button">
+          Sign In
+        </Link>
         <div className="maintain">
           <p className="or-use">OR USE</p>
-          <p className="signup-link">SIGN UP</p>
+
+          <Link to="/signup" className="signup-link">
+            SIGN UP
+          </Link>
         </div>
         <div className="social-login">
           <button className="social-btn google">

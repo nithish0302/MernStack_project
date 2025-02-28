@@ -1,5 +1,6 @@
 import React from "react";
 import { CgArrowTopRight } from "react-icons/cg";
+import { Link } from "react-router-dom";
 
 const VehicleCardComponent = ({ vc, index }) => {
   return (
@@ -16,9 +17,10 @@ const VehicleCardComponent = ({ vc, index }) => {
         <hr />
         <div className="vehicle-footer">
           <p className="vehicle-price">Rs {vc.pricePerDay}/day</p>
-          <button className="vehicle-button">
-            View Details <CgArrowTopRight />
-          </button>
+          <Link to="/Order" className="vehicle-button">
+            View Details
+            <CgArrowTopRight />
+          </Link>
         </div>
       </div>
     </div>
