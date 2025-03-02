@@ -1,13 +1,35 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import "../../SignIn&SignUp.css";
 import { Link } from "react-router-dom";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const role = location.state?.role || "customer";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agree, setAgree] = useState(false);
   const [name, setName] = useState("");
+
+  const handleSignUp = () => {
+    if (!agree) {
+      alert("You must agree to the Terms of Service and Privacy Policy.");
+      return;
+    }
+    const redirectPath =
+      role === "customer"
+        ? "/customer"
+        : role === "vendor"
+        ? "/vendor"
+        : role === "admin"
+        ? "/admin"
+        : "/";
+
+    navigate(redirectPath);
+  };
 
   return (
     <div className="signin-background">
@@ -50,36 +72,31 @@ export default function SignUp() {
           </label>
         </div>
 
-        <Link
-          to="/customer"
+        <button
+          onClick={handleSignUp}
           className="signin-button"
           style={{
             fontFamily: "Roboto, sans-serif",
             fontWeight: "300",
             fontSize: "20px",
-            height: "30px",
-            paddingTop: "18px",
+            height: "60px",
+            paddingTop: "15px",
           }}
         >
           CREATE AN ACCOUNT
-        </Link>
+        </button>
+
         <div className="maintain">
           <p className="or-use">OR USE</p>
-          {/* <p>SIGN In</p> */}
-          <Link to="/signin" className="signup-link">
+          <Link to="/signin" className="signup-link" state={{ role }}>
             SIGN IN
           </Link>
         </div>
+
         <div className="social-login">
           <button className="social-btn google">
             <FcGoogle />
           </button>
-          {/* <button className="social-btn apple">
-            <FaApple />
-          </button>
-          <button className="social-btn facebook">
-            <FaFacebook />
-          </button> */}
         </div>
       </div>
     </div>
