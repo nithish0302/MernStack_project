@@ -1,13 +1,13 @@
 import React from "react";
 import Header from "../General/Header";
-import image from "../../assets/imageindex";
+import { CgArrowTopRight } from "react-icons/cg";
+import "../../VendorFrontPage.css";
 
-const VendorFrontPAge = () => {
+const VendorFrontPage = () => {
   const vehiclesData = [
     {
       name: "Z900",
       type: "Bike",
-      imageUrl: image.image12,
       fuelType: "Petrol",
       gearType: "Manual",
       seats: 2,
@@ -16,7 +16,6 @@ const VendorFrontPAge = () => {
     {
       name: "BMW 1000 RR",
       type: "Bike",
-      imageUrl: image.image4,
       fuelType: "Petrol",
       gearType: "Manual",
       seats: 2,
@@ -25,7 +24,6 @@ const VendorFrontPAge = () => {
     {
       name: "Duke",
       type: "Bike",
-      imageUrl: image.image6,
       fuelType: "Petrol",
       gearType: "Manual",
       seats: 2,
@@ -34,7 +32,6 @@ const VendorFrontPAge = () => {
     {
       name: "Harley Davidson",
       type: "Bike",
-      imageUrl: image.image7,
       fuelType: "Petrol",
       gearType: "Manual",
       seats: 2,
@@ -43,7 +40,6 @@ const VendorFrontPAge = () => {
     {
       name: "Hunter 350",
       type: "Bike",
-      imageUrl: image.image8,
       fuelType: "Petrol",
       gearType: "Manual",
       seats: 4,
@@ -52,7 +48,6 @@ const VendorFrontPAge = () => {
     {
       name: "Nissan Qashqai",
       type: "Car",
-      imageUrl: image.image9,
       fuelType: "Diesel",
       gearType: "Automatic",
       seats: 5,
@@ -61,7 +56,6 @@ const VendorFrontPAge = () => {
     {
       name: "Range Rover Velar",
       type: "Car",
-      imageUrl: image.image10,
       fuelType: "Diesel",
       gearType: "Automatic",
       seats: 7,
@@ -70,7 +64,6 @@ const VendorFrontPAge = () => {
     {
       name: "BMW M8 Competition",
       type: "Car",
-      imageUrl: image.image5,
       fuelType: "Petrol",
       gearType: "Automatic",
       seats: 4,
@@ -79,7 +72,6 @@ const VendorFrontPAge = () => {
     {
       name: "Swift",
       type: "Car",
-      imageUrl: image.image11,
       fuelType: "Diesel",
       gearType: "Manual",
       seats: 5,
@@ -92,14 +84,39 @@ const VendorFrontPAge = () => {
       <div className="Vendortop">
         <Header />
         <div className="Vendorcontainer">
-          <h6>Vehicle Rent For</h6>
-          <div className="vehicle-list">
-            {vehiclesData.map((vc, index) => (
-              <div key={index}>
-                {/* <img src={img} alt={vc.name} className="vehicle-image" /> */}
-                <p className="vehicle-name">{vc.name}</p>
-              </div>
-            ))}
+          <div className="rentfor">
+            <h4 className="title-rent">
+              Vehicle Rent For
+              <span className="arrow">
+                <CgArrowTopRight />
+              </span>
+            </h4>
+
+            <div className="vehicle-listcon">
+              {vehiclesData.map((vc, index) => (
+                <div key={index}>
+                  {/* Uncomment this when you add the image */}
+                  {/* <img src={vc.imageUrl} alt={vc.name} className="vehicle-image" /> */}
+                  <p className="vehicle-namecon">{vc.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="right-container">
+            <button className="new-request">New Request</button>
+
+            <div className="total-rent-con">
+              <p className="total-ren">Total Vehicle Rent :</p>
+              <p className="total-ren">Total Bikes :</p>
+              <p className="total-ren">Total Cars:</p>
+            </div>
+
+            <button className="new-request">Add Car</button>
+            <br />
+            <button className="new-request" style={{ marginTop: "15px" }}>
+              Add Bike
+            </button>
           </div>
         </div>
       </div>
@@ -107,4 +124,4 @@ const VendorFrontPAge = () => {
   );
 };
 
-export default VendorFrontPAge;
+export default VendorFrontPage;
