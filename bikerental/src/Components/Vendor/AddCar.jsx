@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Header from "../General/Header";
-import "../../AddBike.css";
+import "../../AddBike.css"; // Reusing the same CSS file
 
-function AddBike() {
-  const [bike, setBike] = useState({
+function AddCar() {
+  const [car, setCar] = useState({
     name: "",
     fuelType: "Petrol",
     gearType: "Manual",
@@ -15,23 +15,23 @@ function AddBike() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Ensure seats do not exceed 2
-    if (name === "seats" && value > 2) {
+    // Ensure seats do not exceed 5
+    if (name === "seats" && value > 5) {
       return;
     }
 
-    setBike({ ...bike, [name]: value });
+    setCar({ ...car, [name]: value });
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setBike({ ...bike, image: file });
+    setCar({ ...car, image: file });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Bike Data Submitted:", bike);
-    // TODO: Add API call to save bike data with image
+    console.log("Car Data Submitted:", car);
+    // TODO: Add API call to save car data with image
   };
 
   return (
@@ -39,14 +39,14 @@ function AddBike() {
       <Header />
       <div className="AddBikePage">
         <div className="AddBikeContainer">
-          <h4 className="AddBikeTitle">Add New Bike</h4>
+          <h4 className="AddBikeTitle">Add New Car</h4>
           <form onSubmit={handleSubmit} className="BikeForm">
             <div className="BikeField">
-              <label className="BikeLabel">Bike Name:</label>
+              <label className="BikeLabel">Car Name:</label>
               <input
                 type="text"
                 name="name"
-                value={bike.name}
+                value={car.name}
                 onChange={handleChange}
                 className="BikeInput"
                 required
@@ -57,12 +57,13 @@ function AddBike() {
               <label className="BikeLabel">Fuel Type:</label>
               <select
                 name="fuelType"
-                value={bike.fuelType}
+                value={car.fuelType}
                 onChange={handleChange}
                 className="BikeSelect"
               >
                 <option value="Petrol">Petrol</option>
-                <option value="Diesel">Electric</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Electric">Electric</option>
               </select>
             </div>
 
@@ -70,7 +71,7 @@ function AddBike() {
               <label className="BikeLabel">Gear Type:</label>
               <select
                 name="gearType"
-                value={bike.gearType}
+                value={car.gearType}
                 onChange={handleChange}
                 className="BikeSelect"
               >
@@ -80,15 +81,15 @@ function AddBike() {
             </div>
 
             <div className="BikeField">
-              <label className="BikeLabel">Seats (Max 2):</label>
+              <label className="BikeLabel">Seats (Max 5):</label>
               <input
                 type="number"
                 name="seats"
-                value={bike.seats}
+                value={car.seats}
                 onChange={handleChange}
                 className="BikeInput"
                 min="1"
-                max="2"
+                max="5"
                 required
               />
             </div>
@@ -98,7 +99,7 @@ function AddBike() {
               <input
                 type="number"
                 name="pricePerDay"
-                value={bike.pricePerDay}
+                value={car.pricePerDay}
                 onChange={handleChange}
                 className="BikeInput"
                 required
@@ -106,22 +107,22 @@ function AddBike() {
             </div>
 
             <div className="BikeField">
-              <label className="BikeLabel">Bike Image:</label>
+              <label className="BikeLabel">Car Image:</label>
               <div className="BikeFileWrapper">
                 <input
                   type="file"
                   className="BikeFileInput"
-                  id="bikeFile"
+                  id="carFile"
                   onChange={handleImageChange}
                 />
-                <label htmlFor="bikeFile" className="BikeFileLabel">
+                <label htmlFor="carFile" className="BikeFileLabel">
                   Choose File
                 </label>
               </div>
             </div>
 
             <button type="submit" className="AddBikeButton">
-              Add Bike
+              Add Car
             </button>
           </form>
         </div>
@@ -130,4 +131,4 @@ function AddBike() {
   );
 }
 
-export default AddBike;
+export default AddCar;

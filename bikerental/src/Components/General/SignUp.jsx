@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import "../../SignIn&SignUp.css";
 import { Link } from "react-router-dom";
 
-export default function SignIn() {
+export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agree, setAgree] = useState(false);

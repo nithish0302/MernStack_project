@@ -26,7 +26,7 @@ export default function RoleSelection() {
           <p>Explore services and products tailored to your needs.</p>
           <button
             className="role-btn customer"
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/signup", { state: { role: "customer" } })}
           >
             Choose Customer
           </button>
@@ -35,13 +35,23 @@ export default function RoleSelection() {
         <div className="role-card">
           <h3>Vendor</h3>
           <p>List your products and services to reach more customers.</p>
-          <button className="role-btn vendor">Choose Vendor</button>
+          <button
+            className="role-btn vendor"
+            onClick={() => navigate("/signup", { state: { role: "vendor" } })}
+          >
+            Choose Vendor
+          </button>
         </div>
 
         <div className="role-card">
           <h3>Admin</h3>
           <p>Manage platform operations and ensure smooth functionality.</p>
-          <button className="role-btn admin">Choose Admin</button>
+          <button
+            className="role-btn admin"
+            onClick={() => navigate("/signup", { state: { role: "admin" } })}
+          >
+            Choose Admin
+          </button>
         </div>
       </div>
     </div>

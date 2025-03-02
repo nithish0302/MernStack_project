@@ -11,6 +11,7 @@ import ForgotPassword from "./Components/General/ForgotPass";
 import SelectionPage from "./Components/General/Home";
 import VendorFrontPAge from "./Components/Vendor/VendorFrontPAge";
 import AddBike from "./Components/Vendor/AddBike";
+import AddCarPage from "./Components/Vendor/AddCar";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/vendor" element={<VendorFrontPAge />}></Route>
         <Route path="/addbike" element={<AddBike />}></Route>
+        <Route path="/addcar" element={<AddCarPage />}></Route>
       </Routes>
     </BrowserRouter>
   );
