@@ -1,15 +1,34 @@
 import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "../../Header.css";
 import logo from "../../assets/logo.avif";
 
 export default function Header() {
+  const [role, setRole] = useState("customer"); // Default role is customer
+
+  useEffect(() => {
+    // Get role from localStorage or sessionStorage
+    const storedRole = localStorage.getItem("userRole") || "customer";
+    setRole(storedRole);
+  }, []);
+
   return (
     <nav className="header-container">
       <div className="image-manage">
         <img src={logo} alt="Logo" className="logo" />
       </div>
       <div className="nav-links">
-        <NavLink to="/customer" className="header-btn">
+        {/* Dynamic Home Link based on Role */}
+        <NavLink
+          to={
+            role === "vendor"
+              ? "/vendor"
+              : role === "admin"
+              ? "/admin"
+              : "/customer"
+          }
+          className="header-btn"
+        >
           Home
         </NavLink>
         <NavLink to="/carPage" className="header-btn">
@@ -24,7 +43,7 @@ export default function Header() {
         <NavLink to="/about" className="header-btn">
           About Us
         </NavLink>
-        <NavLink to="/signIn" className=" signin">
+        <NavLink to="/signIn" className="signin">
           Sign In
         </NavLink>
       </div>

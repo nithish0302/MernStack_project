@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
-  const role = location.state?.role || "customer";
+  const role = location.state?.role || "customer"; // Default to "customer"
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +19,9 @@ export default function SignUp() {
       alert("You must agree to the Terms of Service and Privacy Policy.");
       return;
     }
+
+    localStorage.setItem("userRole", role); // Store role in localStorage
+
     const redirectPath =
       role === "customer"
         ? "/customer"

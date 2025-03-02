@@ -7,13 +7,15 @@ import { Link } from "react-router-dom";
 export default function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
-  const role = location.state?.role || "customer";
+  const role = location.state?.role || "customer"; // Default to "customer"
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSignIn = () => {
+    localStorage.setItem("userRole", role); // Store role in localStorage
+
     if (role === "customer") {
       navigate("/customer");
     } else if (role === "vendor") {
