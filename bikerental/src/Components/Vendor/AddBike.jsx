@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../General/Header";
 import "../../AddBike.css";
 
-const AddBike = () => {
+function AddBike() {
   const [bike, setBike] = useState({
     name: "",
     fuelType: "Petrol",
@@ -114,6 +114,6 @@ const AddBike = () => {
       </div>
     </>
   );
-};
+}
 
 export default AddBike;
