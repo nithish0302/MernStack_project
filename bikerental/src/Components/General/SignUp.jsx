@@ -14,7 +14,7 @@ export default function SignUp() {
   const [agree, setAgree] = useState(false);
   const [name, setName] = useState("");
 
-  const handleSignUp = () => {
+  function handleSignUp() {
     if (!agree) {
       alert("You must agree to the Terms of Service and Privacy Policy.");
       return;
@@ -32,7 +32,7 @@ export default function SignUp() {
         : "/";
 
     navigate(redirectPath);
-  };
+  }
 
   return (
     <div className="signin-background">

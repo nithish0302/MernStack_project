@@ -4,10 +4,9 @@ import "../../Header.css";
 import logo from "../../assets/logo.avif";
 
 export default function Header() {
-  const [role, setRole] = useState("customer"); // Default role is customer
+  const [role, setRole] = useState("customer");
 
   useEffect(() => {
-    // Get role from localStorage or sessionStorage
     const storedRole = localStorage.getItem("userRole") || "customer";
     setRole(storedRole);
   }, []);
@@ -18,7 +17,6 @@ export default function Header() {
         <img src={logo} alt="Logo" className="logo" />
       </div>
       <div className="nav-links">
-        {/* Dynamic Home Link based on Role */}
         <NavLink
           to={
             role === "vendor"

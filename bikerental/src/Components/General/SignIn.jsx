@@ -7,14 +7,14 @@ import { Link } from "react-router-dom";
 export default function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
-  const role = location.state?.role || "customer"; // Default to "customer"
+  const role = location.state?.role || "customer";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSignIn = () => {
-    localStorage.setItem("userRole", role); // Store role in localStorage
+  function handleSignIn() {
+    localStorage.setItem("userRole", role);
 
     if (role === "customer") {
       navigate("/customer");
@@ -23,7 +23,7 @@ export default function SignIn() {
     } else if (role === "admin") {
       navigate("/admin");
     }
-  };
+  }
 
   return (
     <div className="signin-background">
