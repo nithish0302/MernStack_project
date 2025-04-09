@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const User = require("../Models/user");
-const Vendor = require("../Models/vendor");
-const Admin = require("../Models/admin");
+const User = require("../models/user");
+const Vendor = require("../models/vendor");
+const Admin = require("../models/admin");
 
 const getCollection = (role) => {
   switch (role.toLowerCase()) {
@@ -38,8 +38,10 @@ exports.signin = async (req, res) => {
   try {
     const { email, password, role } = req.body;
     const Collection = getCollection(role);
-
+    console.log(email, password, role);
     const user = await Collection.findOne({ email });
+    console.log(user);
+
     if (!user) return res.status(404).json({ message: "User not found" });
 
     if (user.password !== password) {

@@ -40,7 +40,7 @@ function AddBike() {
     formData.append("image", bike.image);
 
     try {
-      const response = await fetch("http://localhost:8000/api/bikes", {
+      const response = await fetch("http://localhost:8000/api/vech/bikes", {
         method: "POST",
         body: formData,
       });

@@ -6,7 +6,8 @@ const path = require("path");
 const fs = require("fs");
 
 const authRoutes = require("./routes/authRoutes");
-
+const vehicleRoutes = require("./routes/vehicleRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 const app = express();
 
 app.use(cors());
@@ -29,43 +30,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const vehicleSchema = new mongoose.Schema({
-  name: String,
-  fuelType: String,
-  gearType: String,
-  seats: Number,
-  pricePerDay: Number,
-  image: String,
-});
-
-const Vehicle = mongoose.model("Vehicle", vehicleSchema);
-
-app.post("/api/bikes", upload.single("image"), async (req, res) => {
-  try {
-    const { name, fuelType, gearType, seats, pricePerDay } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
-
-    const newVehicle = new Vehicle({
-      name,
-      fuelType,
-      gearType,
-      seats,
-      pricePerDay,
-      image,
-    });
-
-    await newVehicle.save();
-    res.status(201).json({
-      message: "Bike added successfully",
-      bike: newVehicle,
-    });
-  } catch (err) {
-    console.error("Error in /api/bikes:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 app.use("/api/auth", authRoutes);
+app.use("/api/vech", vehicleRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/bikerental";
 
