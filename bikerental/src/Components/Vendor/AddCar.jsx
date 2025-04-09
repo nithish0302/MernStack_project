@@ -28,10 +28,49 @@ function AddCar() {
     setCar({ ...car, image: file });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Car Data Submitted:", car);
-    // TODO: Add API call to save car data with image
+
+    const formData = new FormData();
+    formData.append("name", car.name);
+    formData.append("fuelType", car.fuelType);
+    formData.append("gearType", car.gearType);
+    formData.append("seats", car.seats);
+    formData.append("pricePerDay", car.pricePerDay);
+    if (car.image) {
+      formData.append("image", car.image);
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/api/bikes", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Car added successfully!");
+
+        // Reset form
+        setCar({
+          name: "",
+          fuelType: "Petrol",
+          gearType: "Manual",
+          seats: "",
+          pricePerDay: "",
+          image: null,
+        });
+
+        // Optional: Reset file input manually
+        document.getElementById("carFile").value = "";
+      } else {
+        alert(`Failed to add car: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Error submitting car:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (

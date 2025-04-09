@@ -9,7 +9,7 @@ import AboutUs from "./Components/General/AboutUs";
 import ContactPage from "./Components/General/Contact";
 import ForgotPassword from "./Components/General/ForgotPass";
 import SelectionPage from "./Components/General/Home";
-import VendorFrontPAge from "./Components/Vendor/VendorFrontPAge";
+import VendorFrontPage from "./Components/Vendor/VendorFrontPage";
 import AddBike from "./Components/Vendor/AddBike";
 import AddCarPage from "./Components/Vendor/AddCar";
 
@@ -19,7 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SelectionPage />} />
         <Route path="/customer" element={<CustomerFrontPage />} />
-        <Route path="/signIn" element={<SignIn />} />
+        <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/BikePage" element={<BikePage />} />
         <Route path="/CarPage" element={<CarPage />} />
@@ -27,9 +27,9 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/forgot" element={<ForgotPassword />} />
-        <Route path="/vendor" element={<VendorFrontPAge />}></Route>
-        <Route path="/addbike" element={<AddBike />}></Route>
-        <Route path="/addcar" element={<AddCarPage />}></Route>
+        <Route path="/vendor" element={<VendorFrontPage />} />
+        <Route path="/addbike" element={<AddBike />} />
+        <Route path="/addcar" element={<AddCarPage />} />
       </Routes>
     </BrowserRouter>
   );

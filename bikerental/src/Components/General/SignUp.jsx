@@ -14,24 +14,30 @@ export default function SignUp() {
   const [agree, setAgree] = useState(false);
   const [name, setName] = useState("");
 
-  function handleSignUp() {
+  async function handleSignUp() {
     if (!agree) {
       alert("You must agree to the Terms of Service and Privacy Policy.");
       return;
     }
 
-    localStorage.setItem("userRole", role); // Store role in localStorage
+    try {
+      const response = await fetch("http://localhost:8000/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role }),
+      });
 
-    const redirectPath =
-      role === "customer"
-        ? "/customer"
-        : role === "vendor"
-        ? "/vendor"
-        : role === "admin"
-        ? "/admin"
-        : "/";
-
-    navigate(redirectPath);
+      const data = await response.json();
+      if (response.ok) {
+        alert("Account created successfully!");
+        navigate("/signin"); // Redirect to sign-in page
+      } else {
+        alert(data.message || "Error signing up");
+      }
+    } catch (error) {
+      console.error("Sign-up error:", error);
+      alert("Error signing up. Please try again.");
+    }
   }
 
   return (

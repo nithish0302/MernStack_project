@@ -6,10 +6,12 @@ import image from "../../assets/imageindex.js";
 import VehicleCardComponent from "../General/VechileCardComponenet.jsx";
 
 export default function CustomerFrontPage() {
+  const isAuthenticated = !!localStorage.getItem("userRole");
+
   return (
     <>
       <div className="Customertop">
-        <Header />
+        <Header isAuthenticated={isAuthenticated} />
         <h3 className="textInPage">
           Experience the freedom to go anywhere, anytime, with our affordable,
           reliable, and well-maintained vehicles—your perfect travel companion
@@ -34,7 +36,6 @@ export default function CustomerFrontPage() {
       </div>
       <br />
       <hr style={{ marginBottom: "40px" }} />
-
       <Vehicle />
     </>
   );

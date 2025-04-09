@@ -1,35 +1,65 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import "../../SignIn&SignUp.css";
-import { Link } from "react-router-dom";
 
 export default function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
-  const role = location.state?.role || "customer";
+
+  // Default role: 'user' instead of 'customer' to match backend schema
+  const role = location.state?.role?.toLowerCase() || "user";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSignIn() {
-    localStorage.setItem("userRole", role);
+  const handleSignIn = async () => {
+    setError(""); // Clear old errors
+    try {
+      const response = await fetch("http://localhost:8000/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, role }),
+      });
+      console.log(role);
 
-    if (role === "customer") {
-      navigate("/customer");
-    } else if (role === "vendor") {
-      navigate("/vendor");
-    } else if (role === "admin") {
-      navigate("/admin");
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userRole", data.role);
+        alert("Login Successful");
+
+        // Role-based redirect
+        switch (data.role) {
+          case "vendor":
+            navigate("/vendor");
+            break;
+          case "admin":
+            navigate("/admin");
+            break;
+          default:
+            navigate("/customer"); // assuming /customer is for users
+        }
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error("Sign-in error:", err);
+      setError("Error signing in. Please try again.");
     }
-  }
+  };
 
   return (
     <div className="signin-background">
       <div className="login-card">
         <h4 className="login-text">Log In to Rentals</h4>
         <p className="text">Quick & Simple way to Automate your payment</p>
+
+        {error && <p className="error-message">{error}</p>}
+
         <div className="input-details-container">
           <input
             type="email"
@@ -46,6 +76,7 @@ export default function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
         <div className="handling-comeback">
           <label>
             <input

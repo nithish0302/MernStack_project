@@ -1,61 +1,81 @@
+import { useState } from "react";
 import Header from "./Header.jsx";
 import "../../CarPage.css";
 import image from "../../assets/imageindex.js";
 import VehicleCardComponent from "./VechileCardComponenet.jsx";
 
 export default function CarPage() {
+  const [selectedMake, setSelectedMake] = useState("Select Make");
+  const [selectedModel, setSelectedModel] = useState("Select Model");
+  const [selectedPrice, setSelectedPrice] = useState("Select Price");
+
   return (
     <>
       <Header />
-      <CarSearchBar />
-      <Vehicle />
+      <CarSearchBar
+        selectedMake={selectedMake}
+        setSelectedMake={setSelectedMake}
+        selectedModel={selectedModel}
+        setSelectedModel={setSelectedModel}
+        selectedPrice={selectedPrice}
+        setSelectedPrice={setSelectedPrice}
+      />
+      <Vehicle
+        selectedMake={selectedMake}
+        selectedModel={selectedModel}
+        selectedPrice={selectedPrice}
+      />
     </>
   );
 }
 
-function CarSearchBar() {
+function CarSearchBar({
+  selectedMake,
+  setSelectedMake,
+  selectedModel,
+  setSelectedModel,
+  selectedPrice,
+  setSelectedPrice,
+}) {
   return (
     <div className="search-bar">
-      <select className="dropdown">
+      <select
+        className="dropdown"
+        value={selectedMake}
+        onChange={(e) => setSelectedMake(e.target.value)}
+      >
         <option>Select Make</option>
         <option>Maruti Suzuki</option>
-        <option>Hyundai</option>
-        <option>Tata</option>
-        <option>Mahindra</option>
-        <option>Honda</option>
-        <option>Ford</option>
-        <option>Renault</option>
-        <option>Toyota</option>
-        <option>Kia</option>
-        <option>Volkswagen</option>
+        <option>Nissan</option>
+        <option>Land Rover</option>
+        <option>BMW</option>
       </select>
 
-      <select className="dropdown">
+      <select
+        className="dropdown"
+        value={selectedModel}
+        onChange={(e) => setSelectedModel(e.target.value)}
+      >
         <option>Select Model</option>
         <option>Swift</option>
-        <option>i20</option>
-        <option>Nexon</option>
-        <option>XUV700</option>
-        <option>City</option>
-        <option>Ecosport</option>
-        <option>Kwid</option>
-        <option>Innova</option>
-        <option>Seltos</option>
-        <option>Polo</option>
+        <option>Nissan Qashqai</option>
+        <option>Range Rover Velar</option>
+        <option>BMW M8 Competition</option>
       </select>
 
-      <div className="price-filter">
-        <span>Price:</span>
-        <select className="dropdown">
-          <option>Select Price</option>
-          <option>₹1500 - ₹1800</option>
-          <option>₹1800 - ₹2100</option>
-          <option>₹2100 - ₹2500</option>
-          <option>₹2500 - ₹3000</option>
-        </select>
-      </div>
+      <select
+        className="dropdown"
+        value={selectedPrice}
+        onChange={(e) => setSelectedPrice(e.target.value)}
+      >
+        <option>Select Price</option>
+        <option>₹1500 - ₹1800</option>
+        <option>₹1800 - ₹2100</option>
+        <option>₹2100 - ₹2500</option>
+        <option>₹2500 - ₹3000</option>
+      </select>
 
-      <button className="search-button">🔍 Search Cars</button>
+      {/* <button className="search-button">🔍 Search Car</button> */}
     </div>
   );
 }
@@ -63,6 +83,7 @@ function CarSearchBar() {
 const vehiclesData = [
   {
     name: "Z900",
+    make: "Kawasaki",
     type: "Bike",
     imageUrl: image.image12,
     fuelType: "Petrol",
@@ -72,6 +93,7 @@ const vehiclesData = [
   },
   {
     name: "BMW 1000 RR",
+    make: "BMW",
     type: "Bike",
     imageUrl: image.image4,
     fuelType: "Petrol",
@@ -81,6 +103,7 @@ const vehiclesData = [
   },
   {
     name: "Duke",
+    make: "KTM",
     type: "Bike",
     imageUrl: image.image6,
     fuelType: "Petrol",
@@ -90,6 +113,7 @@ const vehiclesData = [
   },
   {
     name: "Harley Davidson",
+    make: "Harley Davidson",
     type: "Bike",
     imageUrl: image.image7,
     fuelType: "Petrol",
@@ -99,15 +123,17 @@ const vehiclesData = [
   },
   {
     name: "Hunter 350",
+    make: "Royal Enfield",
     type: "Bike",
     imageUrl: image.image8,
     fuelType: "Petrol",
     gearType: "Manual",
-    seats: 4,
+    seats: 2,
     pricePerDay: 1750,
   },
   {
     name: "Nissan Qashqai",
+    make: "Nissan",
     type: "Car",
     imageUrl: image.image9,
     fuelType: "Diesel",
@@ -117,15 +143,17 @@ const vehiclesData = [
   },
   {
     name: "Range Rover Velar",
+    make: "Land Rover",
     type: "Car",
     imageUrl: image.image10,
     fuelType: "Diesel",
     gearType: "Automatic",
-    seats: 7,
+    seats: 5,
     pricePerDay: 1900,
   },
   {
     name: "BMW M8 Competition",
+    make: "BMW",
     type: "Car",
     imageUrl: image.image5,
     fuelType: "Petrol",
@@ -135,6 +163,7 @@ const vehiclesData = [
   },
   {
     name: "Swift",
+    make: "Maruti Suzuki",
     type: "Car",
     imageUrl: image.image11,
     fuelType: "Diesel",
@@ -143,12 +172,30 @@ const vehiclesData = [
     pricePerDay: 2000,
   },
 ];
-function Vehicle() {
+
+function Vehicle({ selectedMake, selectedModel, selectedPrice }) {
+  const filteredVehicles = vehiclesData.filter((vc) => {
+    let priceRange = selectedPrice.match(/\d+/g);
+    let minPrice = priceRange ? parseInt(priceRange[0]) : 0;
+    let maxPrice = priceRange ? parseInt(priceRange[1]) : Infinity;
+
+    return (
+      vc.type === "Car" &&
+      (selectedMake === "Select Make" || vc.make === selectedMake) &&
+      (selectedModel === "Select Model" || vc.name === selectedModel) &&
+      (selectedPrice === "Select Price" ||
+        (vc.pricePerDay >= minPrice && vc.pricePerDay <= maxPrice))
+    );
+  });
+
   return (
     <div className="vehicle-container">
-      {vehiclesData.map(
-        (vc, index) =>
-          vc.type == "Car" && <VehicleCardComponent vc={vc} key={index} />
+      {filteredVehicles.length > 0 ? (
+        filteredVehicles.map((vc, index) => (
+          <VehicleCardComponent vc={vc} key={index} />
+        ))
+      ) : (
+        <p>No cars match your search criteria.</p>
       )}
     </div>
   );

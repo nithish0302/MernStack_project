@@ -1,15 +1,24 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../../Header.css";
 import logo from "../../assets/logo.avif";
 
 export default function Header() {
-  const [role, setRole] = useState("customer");
+  const [role, setRole] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("userRole") || "customer";
+    const storedRole = localStorage.getItem("userRole");
     setRole(storedRole);
-  }, []);
+  }, [location]);
+
+  const handleSignOut = () => {
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("token");
+    setRole(null);
+    navigate("/");
+  };
 
   return (
     <nav className="header-container">
@@ -41,9 +50,15 @@ export default function Header() {
         <NavLink to="/about" className="header-btn">
           About Us
         </NavLink>
-        <NavLink to="/signIn" className="signin">
-          Sign In
-        </NavLink>
+        {role ? (
+          <button onClick={handleSignOut} className="signout">
+            Sign Out
+          </button>
+        ) : (
+          <NavLink to="/signIn" className="signin">
+            Sign In
+          </NavLink>
+        )}
       </div>
     </nav>
   );

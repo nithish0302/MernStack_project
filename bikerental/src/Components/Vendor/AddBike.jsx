@@ -28,10 +28,32 @@ function AddBike() {
     setBike({ ...bike, image: file });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Bike Data Submitted:", bike);
-    // TODO: Add API call to save bike data with image
+
+    const formData = new FormData();
+    formData.append("name", bike.name);
+    formData.append("fuelType", bike.fuelType);
+    formData.append("gearType", bike.gearType);
+    formData.append("seats", bike.seats);
+    formData.append("pricePerDay", bike.pricePerDay);
+    formData.append("image", bike.image);
+
+    try {
+      const response = await fetch("http://localhost:8000/api/bikes", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert("Bike added successfully!");
+      } else {
+        alert("Error adding bike.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("There was an error submitting the form.");
+    }
   };
 
   return (
@@ -41,6 +63,8 @@ function AddBike() {
         <div className="AddBikeContainer">
           <h4 className="AddBikeTitle">Add New Bike</h4>
           <form onSubmit={handleSubmit} className="BikeForm">
+            {/* Form fields */}
+            {/* Bike Name */}
             <div className="BikeField">
               <label className="BikeLabel">Bike Name:</label>
               <input
@@ -53,6 +77,7 @@ function AddBike() {
               />
             </div>
 
+            {/* Fuel Type */}
             <div className="BikeField">
               <label className="BikeLabel">Fuel Type:</label>
               <select
@@ -66,6 +91,7 @@ function AddBike() {
               </select>
             </div>
 
+            {/* Gear Type */}
             <div className="BikeField">
               <label className="BikeLabel">Gear Type:</label>
               <select
@@ -79,6 +105,7 @@ function AddBike() {
               </select>
             </div>
 
+            {/* Seats */}
             <div className="BikeField">
               <label className="BikeLabel">Seats (Max 2):</label>
               <input
@@ -93,6 +120,7 @@ function AddBike() {
               />
             </div>
 
+            {/* Price per Day */}
             <div className="BikeField">
               <label className="BikeLabel">Price Per Day (₹):</label>
               <input
@@ -105,6 +133,7 @@ function AddBike() {
               />
             </div>
 
+            {/* Image */}
             <div className="BikeField">
               <label className="BikeLabel">Bike Image:</label>
               <div className="BikeFileWrapper">
@@ -120,6 +149,7 @@ function AddBike() {
               </div>
             </div>
 
+            {/* Submit Button */}
             <button type="submit" className="AddBikeButton">
               Add Bike
             </button>
