@@ -18,7 +18,7 @@ const VehicleCardComponent = ({ vc, index }) => {
         <div className="vehicle-footer">
           <p className="vehicle-price">Rs {vc.pricePerDay}/day</p>
           <Link to="/Order" className="vehicle-button">
-            View Details
+            Book Vechile
             <CgArrowTopRight />
           </Link>
         </div>

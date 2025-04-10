@@ -26,7 +26,7 @@ export default function RoleSelection() {
           <p>Explore services and products tailored to your needs.</p>
           <button
             className="role-btn customer"
-            onClick={() => navigate("/signup", { state: { role: "customer" } })}
+            onClick={() => navigate("/signin", { state: { role: "customer" } })}
           >
             Choose Customer
           </button>
@@ -37,7 +37,7 @@ export default function RoleSelection() {
           <p>List your products and services to reach more customers.</p>
           <button
             className="role-btn vendor"
-            onClick={() => navigate("/signup", { state: { role: "vendor" } })}
+            onClick={() => navigate("/signin", { state: { role: "vendor" } })}
           >
             Choose Vendor
           </button>
@@ -48,7 +48,7 @@ export default function RoleSelection() {
           <p>Manage platform operations and ensure smooth functionality.</p>
           <button
             className="role-btn admin"
-            onClick={() => navigate("/signup", { state: { role: "admin" } })}
+            onClick={() => navigate("/signin", { state: { role: "admin" } })}
           >
             Choose Admin
           </button>
