@@ -16,7 +16,7 @@ const addVehicle = async (req, res) => {
       image,
       vendor,
     });
-    
+
     await newVehicle.save();
 
     res.status(201).json({

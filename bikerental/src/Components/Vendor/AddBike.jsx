@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../General/Header";
 import "../../AddBike.css";
 import { RxCross2 } from "react-icons/rx";
+
 function AddBike() {
   const [bike, setBike] = useState({
     name: "",
@@ -13,12 +14,37 @@ function AddBike() {
     image: null,
   });
 
+  const [errors, setErrors] = useState({
+    seats: "",
+    pricePerDay: "",
+    image: "",
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "seats" && value != 2) {
-      alert("Check the seat it from 2 ");
-      return;
+    // Validate seats (must be exactly 2)
+    if (name === "seats") {
+      const seatValue = parseInt(value);
+      if (isNaN(seatValue) || seatValue !== 2) {
+        setErrors({ ...errors, seats: "Bikes must have exactly 2 seats" });
+        return;
+      }
+      setErrors({ ...errors, seats: "" });
+    }
+
+    // Validate price (must be positive number)
+    if (name === "pricePerDay") {
+      const priceValue = parseFloat(value);
+      if (isNaN(priceValue)) {
+        setErrors({ ...errors, pricePerDay: "Please enter a valid number" });
+        return;
+      }
+      if (priceValue <= 0) {
+        setErrors({ ...errors, pricePerDay: "Price must be greater than 0" });
+        return;
+      }
+      setErrors({ ...errors, pricePerDay: "" });
     }
 
     setBike({ ...bike, [name]: value });
@@ -26,18 +52,49 @@ function AddBike() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate image file type
+    if (!file.type.match("image.*")) {
+      setErrors({ ...errors, image: "Please select an image file" });
+      return;
+    }
+    setErrors({ ...errors, image: "" });
     setBike({ ...bike, image: file });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Final validation before submit
+    const seatValue = parseInt(bike.seats);
+    if (isNaN(seatValue)) {
+      setErrors({ ...errors, seats: "Please enter a valid number" });
+      return;
+    }
+    if (seatValue !== 2) {
+      setErrors({ ...errors, seats: "Bikes must have exactly 2 seats" });
+      return;
+    }
+
+    const priceValue = parseFloat(bike.pricePerDay);
+    if (isNaN(priceValue)) {
+      setErrors({ ...errors, pricePerDay: "Please enter a valid number" });
+      return;
+    }
+    if (priceValue <= 0) {
+      setErrors({ ...errors, pricePerDay: "Price must be greater than 0" });
+      return;
+    }
+
     const vendorId = localStorage.getItem("vendorId");
     if (!vendorId) {
       alert("Vendor ID not found. Please log in again.");
       return;
     }
+
     if (!bike.image) {
-      alert("Please upload a bike image.");
+      setErrors({ ...errors, image: "Please upload a bike image" });
       return;
     }
 
@@ -50,6 +107,7 @@ function AddBike() {
     formData.append("pricePerDay", bike.pricePerDay);
     formData.append("image", bike.image);
     formData.append("vendor", vendorId);
+
     try {
       const response = await fetch("http://localhost:8000/api/vech/bikes", {
         method: "POST",
@@ -59,6 +117,7 @@ function AddBike() {
       if (response.ok) {
         alert("Bike added successfully!");
 
+        // Reset form
         setBike({
           name: "",
           type: "Bike",
@@ -68,11 +127,15 @@ function AddBike() {
           pricePerDay: "",
           image: null,
         });
-        document.getElementById("carFile").value = "";
+        // document.getElementById("bikeFile").value = "";
+        setErrors({
+          seats: "",
+          pricePerDay: "",
+          image: "",
+        });
       } else {
         const errorData = await response.json();
-        console.error("Error:", errorData);
-        alert("Error adding bike: " + (errorData.message || "Unknown error"));
+        alert(`Error adding bike: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error submitting Bike:", error);
@@ -87,7 +150,6 @@ function AddBike() {
         <div className="AddBikeContainer">
           <h4 className="AddBikeTitle">Add New Bike</h4>
           <form onSubmit={handleSubmit} className="BikeForm">
-            {/* Form fields */}
             {/* Bike Name */}
             <div className="BikeField">
               <label className="BikeLabel">Bike Name:</label>
@@ -111,7 +173,7 @@ function AddBike() {
                 className="BikeSelect"
               >
                 <option value="Petrol">Petrol</option>
-                <option value="Diesel">Electric</option>
+                <option value="Electric">Electric</option>
               </select>
             </div>
 
@@ -131,17 +193,20 @@ function AddBike() {
 
             {/* Seats */}
             <div className="BikeField">
-              <label className="BikeLabel">Seats (Max 2):</label>
+              <label className="BikeLabel">Seats:</label>
               <input
                 type="number"
                 name="seats"
                 value={bike.seats}
                 onChange={handleChange}
                 className="BikeInput"
-                min="1"
+                min="2"
                 max="2"
                 required
               />
+              {errors.seats && (
+                <span className="error-message">{errors.seats}</span>
+              )}
             </div>
 
             {/* Price per Day */}
@@ -153,8 +218,13 @@ function AddBike() {
                 value={bike.pricePerDay}
                 onChange={handleChange}
                 className="BikeInput"
+                min="1"
+                step="0.01"
                 required
               />
+              {errors.pricePerDay && (
+                <span className="error-message">{errors.pricePerDay}</span>
+              )}
             </div>
 
             {/* Image */}
@@ -168,6 +238,7 @@ function AddBike() {
                       className="BikeFileInput"
                       id="bikeFile"
                       onChange={handleImageChange}
+                      accept="image/*"
                       required
                     />
                     <label htmlFor="bikeFile" className="BikeFileLabel">
@@ -178,7 +249,11 @@ function AddBike() {
                   <div className="SelectedFileInfo">
                     <span>Selected File: {bike.image.name}</span>
                     <button
-                      onClick={() => setBike({ ...bike, image: null })}
+                      type="button"
+                      onClick={() => {
+                        setBike({ ...bike, image: null });
+                        setErrors({ ...errors, image: "" });
+                      }}
                       className="RemoveImageBtn"
                       title="Remove Image"
                     >
@@ -187,9 +262,11 @@ function AddBike() {
                   </div>
                 )}
               </div>
+              {errors.image && (
+                <span className="error-message">{errors.image}</span>
+              )}
             </div>
 
-            {/* Submit Button */}
             <button type="submit" className="AddBikeButton">
               Add Bike
             </button>

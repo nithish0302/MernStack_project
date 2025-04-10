@@ -1,95 +1,46 @@
-import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../General/Header";
 import { CgArrowTopRight } from "react-icons/cg";
 import "../../VendorFrontPage.css";
+import axios from "axios";
 
 const VendorFrontPage = () => {
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
+  const [vehicles, setVehicles] = useState([]);
+  const [bikeCount, setBikeCount] = useState(0);
+  const [carCount, setCarCount] = useState(0);
+  const vendorId = localStorage.getItem("vendorId");
 
-  const vehiclesData = [
-    {
-      name: "Z900",
-      type: "Bike",
-      fuelType: "Petrol",
-      gearType: "Manual",
-      seats: 2,
-      pricePerDay: 1500,
-    },
-    {
-      name: "BMW 1000 RR",
-      type: "Bike",
-      fuelType: "Petrol",
-      gearType: "Manual",
-      seats: 2,
-      pricePerDay: 1550,
-    },
-    {
-      name: "Duke",
-      type: "Bike",
-      fuelType: "Petrol",
-      gearType: "Manual",
-      seats: 2,
-      pricePerDay: 1600,
-    },
-    {
-      name: "Harley Davidson",
-      type: "Bike",
-      fuelType: "Petrol",
-      gearType: "Manual",
-      seats: 2,
-      pricePerDay: 1650,
-    },
-    {
-      name: "Hunter 350",
-      type: "Bike",
-      fuelType: "Petrol",
-      gearType: "Manual",
-      seats: 4,
-      pricePerDay: 1750,
-    },
-    {
-      name: "Nissan Qashqai",
-      type: "Car",
-      fuelType: "Diesel",
-      gearType: "Automatic",
-      seats: 5,
-      pricePerDay: 1800,
-    },
-    {
-      name: "Range Rover Velar",
-      type: "Car",
-      fuelType: "Diesel",
-      gearType: "Automatic",
-      seats: 7,
-      pricePerDay: 1900,
-    },
-    {
-      name: "BMW M8 Competition",
-      type: "Car",
-      fuelType: "Petrol",
-      gearType: "Automatic",
-      seats: 4,
-      pricePerDay: 1950,
-    },
-    {
-      name: "Swift",
-      type: "Car",
-      fuelType: "Diesel",
-      gearType: "Manual",
-      seats: 5,
-      pricePerDay: 2000,
-    },
-  ];
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/vech/count/${vendorId}`
+        );
 
-  // Function to handle Add Car button click
+        const data = res.data;
+        setVehicles(data);
+
+        const bikes = data.filter((v) => v.type.toLowerCase() === "bike");
+        const cars = data.filter((v) => v.type.toLowerCase() === "car");
+
+        setBikeCount(bikes.length);
+        setCarCount(cars.length);
+      } catch (err) {
+        console.error("Error fetching vehicles:", err);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
   const handleAddCar = () => {
-    navigate("/addcar"); // Navigate to the /addcar route
+    navigate("/addcar");
   };
 
-  // Function to handle Add Bike button click
   const handleAddBike = () => {
-    navigate("/addbike"); // Navigate to the /addbike route
+    navigate("/addbike");
   };
 
   return (
@@ -103,25 +54,17 @@ const VendorFrontPage = () => {
               <CgArrowTopRight />
             </span>
           </h4>
-
-          <div className="vehicle-listcon">
-            {vehiclesData.map((vc, index) => (
-              <div key={index}>
-                {/* Uncomment this when you add the image */}
-                {/* <img src={vc.imageUrl} alt={vc.name} className="vehicle-image" /> */}
-                <p className="vehicle-namecon">{vc.name}</p>
-              </div>
-            ))}
-          </div>
+          {/* Left side container - empty for now */}
+          <div className="vehicle-listcon"></div>
         </div>
 
         <div className="right-container">
           <button className="new-request">New Request</button>
 
           <div className="total-rent-con">
-            <p className="total-ren">Total Vehicle Rent :</p>
-            <p className="total-ren">Total Bikes :</p>
-            <p className="total-ren">Total Cars:</p>
+            <p className="total-ren">Total Vehicle Rented: 0</p>
+            <p className="total-ren">Total Bikes: {bikeCount}</p>
+            <p className="total-ren">Total Cars: {carCount}</p>
           </div>
 
           <button className="new-request" onClick={handleAddCar}>
