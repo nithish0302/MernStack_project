@@ -106,3 +106,24 @@
 .AddBikeButton:hover {
   background-color: #0056b3;
 }
+
+.SelectedFileInfo {
+  display: inline-flex;
+  align-items: center;
+  background-color: #007bff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+}
+.RemoveImageBtn {
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}

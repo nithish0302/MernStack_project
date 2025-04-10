@@ -16,7 +16,7 @@ export default function SignIn() {
   const [error, setError] = useState("");
 
   const handleSignIn = async () => {
-    setError(""); // Clear old errors
+    setError("");
     try {
       const response = await fetch("http://localhost:8000/api/auth/signin", {
         method: "POST",
@@ -26,10 +26,13 @@ export default function SignIn() {
       console.log(role);
 
       const data = await response.json();
-
+      // console.log(data.user.id);
+      // console.log(data);
       if (response.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userRole", data.role);
+
+        localStorage.setItem("vendorId", data.user.id);
         alert("Login Successful");
 
         // Role-based redirect

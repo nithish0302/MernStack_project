@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import Header from "../General/Header";
-import "../../AddBike.css"; // Reusing the same CSS file
+import "../../AddBike.css";
+import { RxCross2 } from "react-icons/rx";
 
 function AddCar() {
   const [car, setCar] = useState({
     name: "",
+    type: "Car",
     fuelType: "Petrol",
     gearType: "Manual",
     seats: "",
@@ -16,7 +18,8 @@ function AddCar() {
     const { name, value } = e.target;
 
     // Ensure seats do not exceed 5
-    if (name === "seats" && value > 5) {
+    if (name === "seats" && value > 5 && value < 2) {
+      alert("Check the seat it from 2 to 5");
       return;
     }
 
@@ -30,19 +33,28 @@ function AddCar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const vendorId = localStorage.getItem("vendorId");
+    if (!vendorId) {
+      alert("Vendor ID not found. Please log in again.");
+      return;
+    }
+    if (!car.image) {
+      alert("Please upload a car image.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("name", car.name);
+    formData.append("type", car.type);
     formData.append("fuelType", car.fuelType);
     formData.append("gearType", car.gearType);
     formData.append("seats", car.seats);
     formData.append("pricePerDay", car.pricePerDay);
-    if (car.image) {
-      formData.append("image", car.image);
-    }
+    formData.append("image", car.image);
+    formData.append("vendor", vendorId);
 
     try {
-      const response = await fetch("http://localhost:8000/api/bikes", {
+      const response = await fetch("http://localhost:8000/api/vech/bikes", {
         method: "POST",
         body: formData,
       });
@@ -65,7 +77,9 @@ function AddCar() {
         // Optional: Reset file input manually
         document.getElementById("carFile").value = "";
       } else {
-        alert(`Failed to add car: ${data.message}`);
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert("Error adding bike: " + (errorData.message || "Unknown error"));
       }
     } catch (error) {
       console.error("Error submitting car:", error);
@@ -146,17 +160,33 @@ function AddCar() {
             </div>
 
             <div className="BikeField">
-              <label className="BikeLabel">Car Image:</label>
+              <label className="BikeLabel">Bike Image:</label>
               <div className="BikeFileWrapper">
-                <input
-                  type="file"
-                  className="BikeFileInput"
-                  id="carFile"
-                  onChange={handleImageChange}
-                />
-                <label htmlFor="carFile" className="BikeFileLabel">
-                  Choose File
-                </label>
+                {!car.image ? (
+                  <>
+                    <input
+                      type="file"
+                      className="BikeFileInput"
+                      id="bikeFile"
+                      onChange={handleImageChange}
+                      required
+                    />
+                    <label htmlFor="bikeFile" className="BikeFileLabel">
+                      Choose File
+                    </label>
+                  </>
+                ) : (
+                  <div className="SelectedFileInfo">
+                    <span>Selected File: {car.image.name}</span>
+                    <button
+                      onClick={() => setCar({ ...car, image: null })}
+                      className="RemoveImageBtn"
+                      title="Remove Image"
+                    >
+                      <RxCross2 size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

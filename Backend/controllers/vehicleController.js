@@ -2,18 +2,21 @@ const Vehicle = require("../models/vehicle");
 
 const addVehicle = async (req, res) => {
   try {
-    const { name, fuelType, gearType, seats, pricePerDay } = req.body;
+    const { name, type, fuelType, gearType, seats, pricePerDay, vendor } =
+      req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
     const newVehicle = new Vehicle({
       name,
+      type,
       fuelType,
       gearType,
       seats,
       pricePerDay,
       image,
+      vendor,
     });
-
+    
     await newVehicle.save();
 
     res.status(201).json({

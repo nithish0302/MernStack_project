@@ -40,7 +40,7 @@ exports.signin = async (req, res) => {
     const Collection = getCollection(role);
     console.log(email, password, role);
     const user = await Collection.findOne({ email });
-    console.log(user);
+    // console.log(user);
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -51,8 +51,8 @@ exports.signin = async (req, res) => {
     const token = jwt.sign({ id: user._id, role }, "jwt_secret", {
       expiresIn: "1h",
     });
-
-    res.json({
+    console.log(user._id);
+    res.status(200).json({
       message: "Login successful",
       token,
       role,
@@ -63,6 +63,7 @@ exports.signin = async (req, res) => {
         role: user.role,
       },
     });
+    console.log(user._id);
   } catch (error) {
     console.error("Signin error:", error);
     res.status(500).json({ message: "Server error" });

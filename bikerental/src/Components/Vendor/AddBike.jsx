@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Header from "../General/Header";
 import "../../AddBike.css";
-
+import { RxCross2 } from "react-icons/rx";
 function AddBike() {
   const [bike, setBike] = useState({
     name: "",
+    type: "Bike",
     fuelType: "Petrol",
     gearType: "Manual",
     seats: "",
@@ -16,7 +17,8 @@ function AddBike() {
     const { name, value } = e.target;
 
     // Ensure seats do not exceed 2
-    if (name === "seats" && value > 2) {
+    if (name === "seats" && value != 2) {
+      alert("Check the seat it from 2 ");
       return;
     }
 
@@ -30,15 +32,25 @@ function AddBike() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const vendorId = localStorage.getItem("vendorId");
+    if (!vendorId) {
+      alert("Vendor ID not found. Please log in again.");
+      return;
+    }
+    if (!bike.image) {
+      alert("Please upload a bike image.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("name", bike.name);
+    formData.append("type", bike.type);
     formData.append("fuelType", bike.fuelType);
     formData.append("gearType", bike.gearType);
     formData.append("seats", bike.seats);
     formData.append("pricePerDay", bike.pricePerDay);
     formData.append("image", bike.image);
-
+    formData.append("vendor", vendorId);
     try {
       const response = await fetch("http://localhost:8000/api/vech/bikes", {
         method: "POST",
@@ -47,12 +59,25 @@ function AddBike() {
 
       if (response.ok) {
         alert("Bike added successfully!");
+
+        setBike({
+          name: "",
+          type: "Bike",
+          fuelType: "Petrol",
+          gearType: "Manual",
+          seats: "",
+          pricePerDay: "",
+          image: null,
+        });
+        document.getElementById("carFile").value = "";
       } else {
-        alert("Error adding bike.");
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert("Error adding bike: " + (errorData.message || "Unknown error"));
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("There was an error submitting the form.");
+      console.error("Error submitting Bike:", error);
+      alert("Something went wrong. Please try again later.");
     }
   };
 
@@ -137,15 +162,31 @@ function AddBike() {
             <div className="BikeField">
               <label className="BikeLabel">Bike Image:</label>
               <div className="BikeFileWrapper">
-                <input
-                  type="file"
-                  className="BikeFileInput"
-                  id="bikeFile"
-                  onChange={handleImageChange}
-                />
-                <label htmlFor="bikeFile" className="BikeFileLabel">
-                  Choose File
-                </label>
+                {!bike.image ? (
+                  <>
+                    <input
+                      type="file"
+                      className="BikeFileInput"
+                      id="bikeFile"
+                      onChange={handleImageChange}
+                      required
+                    />
+                    <label htmlFor="bikeFile" className="BikeFileLabel">
+                      Choose File
+                    </label>
+                  </>
+                ) : (
+                  <div className="SelectedFileInfo">
+                    <span>Selected File: {bike.image.name}</span>
+                    <button
+                      onClick={() => setBike({ ...bike, image: null })}
+                      className="RemoveImageBtn"
+                      title="Remove Image"
+                    >
+                      <RxCross2 size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
