@@ -16,7 +16,6 @@ function AddBike() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Ensure seats do not exceed 2
     if (name === "seats" && value != 2) {
       alert("Check the seat it from 2 ");
       return;
