@@ -1,13 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./Header.jsx";
 import "../../CarPage.css";
-import image from "../../assets/imageindex.js";
 import VehicleCardComponent from "./VechileCardComponenet.jsx";
+import axios from "axios";
 
 export default function BikePage() {
   const [selectedMake, setSelectedMake] = useState("Select Make");
   const [selectedModel, setSelectedModel] = useState("Select Model");
   const [selectedPrice, setSelectedPrice] = useState("Select Price");
+  const [bikes, setBikes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBikes = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/vech/bikes",
+          {
+            params: { populate: "vendor" },
+          }
+        );
+
+        // Handle different possible response structures
+        const responseData = response.data;
+        const bikesData =
+          responseData.data || // If data is nested in data property
+          responseData.bikes || // If data is in bikes property
+          responseData; // If data is the direct response
+
+        setBikes(Array.isArray(bikesData) ? bikesData : []);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load bikes. Please try again later.");
+        setLoading(false);
+        console.error("Error fetching bikes:", err);
+      }
+    };
+
+    fetchBikes();
+  }, []);
+
+  if (loading) return <div className="loading">Loading bikes...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <>
@@ -21,9 +56,11 @@ export default function BikePage() {
         setSelectedPrice={setSelectedPrice}
       />
       <Vehicle
+        vehicles={bikes}
         selectedMake={selectedMake}
         selectedModel={selectedModel}
         selectedPrice={selectedPrice}
+        vehicleType="Bike"
       />
     </>
   );
@@ -37,6 +74,31 @@ function BikeSearchBar({
   selectedPrice,
   setSelectedPrice,
 }) {
+  const makeOptions = [
+    "Select Make",
+    "Kawasaki",
+    "BMW",
+    "KTM",
+    "Harley Davidson",
+    "Royal Enfield",
+  ];
+
+  const modelOptions = [
+    "Select Model",
+    "Z900",
+    "BMW 1000 RR",
+    "Duke",
+    "Harley Davidson",
+    "Hunter 350",
+  ];
+
+  const priceOptions = [
+    "Select Price",
+    "₹1500 - ₹1600",
+    "₹1600 - ₹1700",
+    "₹1700 - ₹1800",
+  ];
+
   return (
     <div className="search-bar">
       <select
@@ -44,12 +106,11 @@ function BikeSearchBar({
         value={selectedMake}
         onChange={(e) => setSelectedMake(e.target.value)}
       >
-        <option>Select Make</option>
-        <option>Kawasaki</option>
-        <option>BMW</option>
-        <option>KTM</option>
-        <option>Harley Davidson</option>
-        <option>Royal Enfield</option>
+        {makeOptions.map((make, index) => (
+          <option key={`make-${index}`} value={make}>
+            {make}
+          </option>
+        ))}
       </select>
 
       <select
@@ -57,12 +118,11 @@ function BikeSearchBar({
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
       >
-        <option>Select Model</option>
-        <option>Z900</option>
-        <option>BMW 1000 RR</option>
-        <option>Duke</option>
-        <option>Harley Davidson</option>
-        <option>Hunter 350</option>
+        {modelOptions.map((model, index) => (
+          <option key={`model-${index}`} value={model}>
+            {model}
+          </option>
+        ))}
       </select>
 
       <select
@@ -70,132 +130,57 @@ function BikeSearchBar({
         value={selectedPrice}
         onChange={(e) => setSelectedPrice(e.target.value)}
       >
-        <option>Select Price</option>
-        <option>₹1500 - ₹1600</option>
-        <option>₹1600 - ₹1700</option>
-        <option>₹1700 - ₹1800</option>
+        {priceOptions.map((price, index) => (
+          <option key={`price-${index}`} value={price}>
+            {price}
+          </option>
+        ))}
       </select>
-
-      {/* <button className="search-button">🔍 Search Bike</button> */}
     </div>
   );
 }
-const vehiclesData = [
-  {
-    name: "Z900",
-    make: "Kawasaki",
-    type: "Bike",
-    imageUrl: image.image12,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1500,
-  },
-  {
-    name: "BMW 1000 RR",
-    make: "BMW",
-    type: "Bike",
-    imageUrl: image.image4,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1550,
-  },
-  {
-    name: "Duke",
-    make: "KTM",
-    type: "Bike",
-    imageUrl: image.image6,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1600,
-  },
-  {
-    name: "Harley Davidson",
-    make: "Harley Davidson",
-    type: "Bike",
-    imageUrl: image.image7,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1650,
-  },
-  {
-    name: "Hunter 350",
-    make: "Royal Enfield",
-    type: "Bike",
-    imageUrl: image.image8,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1750,
-  },
-  {
-    name: "Nissan Qashqai",
-    make: "Nissan",
-    type: "Car",
-    imageUrl: image.image9,
-    fuelType: "Diesel",
-    gearType: "Automatic",
-    seats: 5,
-    pricePerDay: 1800,
-  },
-  {
-    name: "Range Rover Velar",
-    make: "Land Rover",
-    type: "Car",
-    imageUrl: image.image10,
-    fuelType: "Diesel",
-    gearType: "Automatic",
-    seats: 5,
-    pricePerDay: 1900,
-  },
-  {
-    name: "BMW M8 Competition",
-    make: "BMW",
-    type: "Car",
-    imageUrl: image.image5,
-    fuelType: "Petrol",
-    gearType: "Automatic",
-    seats: 4,
-    pricePerDay: 1950,
-  },
-  {
-    name: "Swift",
-    make: "Maruti Suzuki",
-    type: "Car",
-    imageUrl: image.image11,
-    fuelType: "Diesel",
-    gearType: "Manual",
-    seats: 5,
-    pricePerDay: 2000,
-  },
-];
 
-function Vehicle({ selectedMake, selectedModel, selectedPrice }) {
-  const filteredVehicles = vehiclesData.filter((vc) => {
-    let priceRange = selectedPrice.match(/\d+/g);
-    let minPrice = priceRange ? parseInt(priceRange[0]) : 0;
-    let maxPrice = priceRange ? parseInt(priceRange[1]) : Infinity;
+function Vehicle({
+  vehicles = [],
+  selectedMake,
+  selectedModel,
+  selectedPrice,
+  vehicleType = "Bike",
+}) {
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    if (!vehicle) return false;
+
+    const priceRange = selectedPrice.match(/\d+/g);
+    const minPrice = priceRange ? parseInt(priceRange[0]) : 0;
+    const maxPrice = priceRange ? parseInt(priceRange[1]) : Infinity;
 
     return (
-      vc.type === "Bike" &&
-      (selectedMake === "Select Make" || vc.make === selectedMake) &&
-      (selectedModel === "Select Model" || vc.name === selectedModel) &&
+      vehicle.type === vehicleType &&
+      (selectedMake === "Select Make" || vehicle.make === selectedMake) &&
+      (selectedModel === "Select Model" || vehicle.name === selectedModel) &&
       (selectedPrice === "Select Price" ||
-        (vc.pricePerDay >= minPrice && vc.pricePerDay <= maxPrice))
+        (vehicle.pricePerDay >= minPrice && vehicle.pricePerDay <= maxPrice))
     );
   });
 
   return (
     <div className="vehicle-container">
       {filteredVehicles.length > 0 ? (
-        filteredVehicles.map((vc, index) => (
-          <VehicleCardComponent vc={vc} key={index} />
+        filteredVehicles.map((vehicle) => (
+          <VehicleCardComponent
+            key={vehicle._id || vehicle.id}
+            vehicleId={vehicle._id || vehicle.id}
+            vc={{
+              ...vehicle,
+              imageUrl: vehicle.image || "/default-bike.jpg",
+              make: vehicle.make || "Unknown Make",
+            }}
+          />
         ))
       ) : (
-        <p>No bikes match your search criteria.</p>
+        <p className="no-results">
+          No {vehicleType.toLowerCase()}s match your search criteria.
+        </p>
       )}
     </div>
   );
