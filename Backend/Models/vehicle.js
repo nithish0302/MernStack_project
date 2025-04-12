@@ -13,8 +13,12 @@ const vehicleSchema = new mongoose.Schema({
     ref: "Vendor",
     required: true,
   },
+  isAvailable: {
+    type: Boolean,
+    default: true,
+  },
+  make: { type: String, required: false }, 
 });
-
 
 const Vehicle =
   mongoose.models.Vehicle || mongoose.model("Vehicle", vehicleSchema);

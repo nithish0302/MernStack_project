@@ -1,10 +1,29 @@
 import React from "react";
 import { CgArrowTopRight } from "react-icons/cg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const VehicleCardComponent = ({ vc, index }) => {
+const VehicleCardComponent = ({ vc, vehicleId }) => {
+  const navigate = useNavigate();
+
+  const handleBookClick = () => {
+    navigate("/Order", {
+      state: {
+        vehicleData: {
+          id: vehicleId,
+          name: vc.name,
+          type: vc.type,
+          pricePerDay: vc.pricePerDay,
+          imageUrl: vc.imageUrl,
+          fuelType: vc.fuelType,
+          gearType: vc.gearType,
+          seats: vc.seats,
+        },
+      },
+    });
+  };
+
   return (
-    <div key={index} className="vehicle-card">
+    <div className="vehicle-card">
       <img src={vc.imageUrl} alt={vc.type} className="vehicle-image" />
       <div className="vehicle-content">
         <h3 className="vehicle-title">{vc.name}</h3>
@@ -17,10 +36,10 @@ const VehicleCardComponent = ({ vc, index }) => {
         <hr />
         <div className="vehicle-footer">
           <p className="vehicle-price">Rs {vc.pricePerDay}/day</p>
-          <Link to="/Order" className="vehicle-button">
-            Book Vechile
+          <button onClick={handleBookClick} className="vehicle-button">
+            Book Vehicle
             <CgArrowTopRight />
-          </Link>
+          </button>
         </div>
       </div>
     </div>

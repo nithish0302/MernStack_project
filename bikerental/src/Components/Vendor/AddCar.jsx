@@ -12,6 +12,7 @@ function AddCar() {
     seats: "",
     pricePerDay: "",
     image: null,
+    isAvailable: true,
   });
 
   const handleChange = (e) => {
@@ -67,6 +68,7 @@ function AddCar() {
     formData.append("pricePerDay", car.pricePerDay);
     formData.append("image", car.image);
     formData.append("vendor", vendorId);
+    formData.append("isAvailable", car.isAvailable);
 
     try {
       const response = await fetch("http://localhost:8000/api/vech/cars", {
