@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
@@ -27,6 +26,11 @@ const bookingSchema = new mongoose.Schema({
   bookedCity: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   status: { type: String, default: "ongoing" },
+  statusOfVendor: {
+    type: String,
+    enum: ["pending", "accepted", "cancelled"],
+    default: "pending",
+  },
 });
 
 module.exports =

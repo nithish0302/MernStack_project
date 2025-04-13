@@ -1,12 +1,51 @@
 import "../../App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Header from "../General/Header.jsx";
 import image from "../../assets/imageindex.js";
 import VehicleCardComponent from "../General/VechileCardComponenet.jsx";
 
 export default function CustomerFrontPage() {
   const isAuthenticated = !!localStorage.getItem("userRole");
+  const [bikes, setBikes] = useState([]);
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const [bikesResponse, carsResponse] = await Promise.all([
+          axios.get("http://localhost:8000/api/vech/bikes"),
+          axios.get("http://localhost:8000/api/vech/cars"),
+        ]);
+
+        const getVehicleData = (response) => {
+          const data = response.data;
+          if (Array.isArray(data)) return data;
+          if (data && Array.isArray(data.data)) return data.data;
+          if (data && Array.isArray(data.vehicles)) return data.vehicles;
+          if (data && Array.isArray(data.bikes)) return data.bikes;
+          if (data && Array.isArray(data.cars)) return data.cars;
+          return [];
+        };
+
+        setBikes(getVehicleData(bikesResponse).slice(0, 5));
+        setCars(getVehicleData(carsResponse).slice(0, 4));
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load vehicles. Please try again later.");
+        setLoading(false);
+        console.error("Error fetching vehicles:", err);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
+  if (loading) return <div className="loading">Loading vehicles...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <>
@@ -19,6 +58,7 @@ export default function CustomerFrontPage() {
         </h3>
         <VehicleSelector />
       </div>
+
       <h3 className="drive">Drive the Vehicle By Your Favourite Brand</h3>
       <br />
       <br />
@@ -36,7 +76,17 @@ export default function CustomerFrontPage() {
       </div>
       <br />
       <hr style={{ marginBottom: "40px" }} />
-      <Vehicle />
+      <div className="vehicle-container">
+        {[...bikes, ...cars].length > 0 ? (
+          [...bikes, ...cars].map((vehicle, index) => (
+            <VehicleCardComponent vc={vehicle} key={`vehicle-${index}`} />
+          ))
+        ) : (
+          <p style={{ textAlign: "center", width: "100%" }}>
+            No vehicles available
+          </p>
+        )}
+      </div>
     </>
   );
 }
@@ -73,100 +123,6 @@ function VehicleSelector() {
         <option value="Bike">Bike</option>
         <option value="Car">Car</option>
       </select>
-    </div>
-  );
-}
-
-const vehiclesData = [
-  {
-    name: "Z900",
-    type: "Bike",
-    imageUrl: image.image12,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1500,
-  },
-  {
-    name: "BMW 1000 RR",
-    type: "Bike",
-    imageUrl: image.image4,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1550,
-  },
-  {
-    name: "Duke",
-    type: "Bike",
-    imageUrl: image.image6,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1600,
-  },
-  {
-    name: "Harley Davidson",
-    type: "Bike",
-    imageUrl: image.image7,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 2,
-    pricePerDay: 1650,
-  },
-  {
-    name: "Hunter 350",
-    type: "Bike",
-    imageUrl: image.image8,
-    fuelType: "Petrol",
-    gearType: "Manual",
-    seats: 4,
-    pricePerDay: 1750,
-  },
-  {
-    name: "Nissan Qashqai",
-    type: "Car",
-    imageUrl: image.image9,
-    fuelType: "Diesel",
-    gearType: "Automatic",
-    seats: 5,
-    pricePerDay: 1800,
-  },
-  {
-    name: "Range Rover Velar",
-    type: "Car",
-    imageUrl: image.image10,
-    fuelType: "Diesel",
-    gearType: "Automatic",
-    seats: 7,
-    pricePerDay: 1900,
-  },
-  {
-    name: "BMW M8 Competition",
-    type: "Car",
-    imageUrl: image.image5,
-    fuelType: "Petrol",
-    gearType: "Automatic",
-    seats: 4,
-    pricePerDay: 1950,
-  },
-  {
-    name: "Swift",
-    type: "Car",
-    imageUrl: image.image11,
-    fuelType: "Diesel",
-    gearType: "Manual",
-    seats: 5,
-    pricePerDay: 2000,
-  },
-];
-
-function Vehicle() {
-  return (
-    <div className="vehicle-container">
-      {vehiclesData.map((vc, index) => (
-        <VehicleCardComponent vc={vc} key={index} />
-      ))}
     </div>
   );
 }

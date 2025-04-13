@@ -98,7 +98,7 @@ function OrderComponent() {
     try {
       const bookingData = {
         userId: localStorage.getItem("vendorId") || "guest-user",
-        vehicleId: vehicleData.id, 
+        vehicleId: vehicleData.id,
         startDate: formData.pickupDate,
         endDate: formData.dropDate,
         totalAmount: formData.totalPrice,
@@ -120,7 +120,7 @@ function OrderComponent() {
 
       if (response.data.success) {
         alert("Booking successful!");
-        navigate("/user/bookings");
+        navigate("/order-confirmation");
       }
     } catch (err) {
       console.error("Booking error:", err);

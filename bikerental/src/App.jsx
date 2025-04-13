@@ -12,6 +12,11 @@ import SelectionPage from "./Components/General/Home";
 import VendorFrontPage from "./Components/Vendor/VendorFrontPage";
 import AddBike from "./Components/Vendor/AddBike";
 import AddCarPage from "./Components/Vendor/AddCar";
+import OrderConfirmation from "./Components/Customer/OrderConfirmation";
+import MyBookingsPage from "./Components/Customer/MyBookingsPage";
+import CustomerProfile from "./Components/Customer/CustomerProfile";
+import VendorProfile from "./Components/Vendor/VendorProfile";
+import VendorRequestsPage from "./Components/Vendor/VendorRequestsPage";
 
 function App() {
   return (
@@ -30,6 +35,11 @@ function App() {
         <Route path="/vendor" element={<VendorFrontPage />} />
         <Route path="/addbike" element={<AddBike />} />
         <Route path="/addcar" element={<AddCarPage />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route path="/my-bookings" element={<MyBookingsPage />} />
+        <Route path="/vendor-requests" element={<VendorRequestsPage />} />
+        <Route path="/my-profile" element={<CustomerProfile />} />
+        <Route path="/myvenprofile" element={<VendorProfile />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,153 @@
+/* User Profile Page Styles */
+.user-profile-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 20px;
+  font-family: "Radio Canada", sans-serif;
+  color: #333;
+}
+
+.user-profile-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 28px;
+}
+
+.user-profile-view {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-profile-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.user-role-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  background-color: #e0f2fe;
+  color: #0ea5e9;
+}
+
+.user-profile-details {
+  margin-bottom: 20px;
+}
+
+.user-detail-row {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.user-detail-row span:first-child {
+  font-weight: 500;
+  color: #555;
+  min-width: 100px;
+}
+
+.user-edit-btn {
+  padding: 10px 20px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  width: 100%;
+  font-size: 16px;
+}
+
+.user-edit-btn:hover {
+  background-color: #2563eb;
+}
+
+.user-profile-form {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-form-group {
+  margin-bottom: 15px;
+}
+
+.user-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #555;
+}
+
+.user-form-group input,
+.user-form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 15px;
+  font-family: "Radio Canada", sans-serif;
+}
+
+.user-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.user-save-btn {
+  padding: 10px 20px;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  flex: 1;
+}
+
+.user-cancel-btn {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  flex: 1;
+}
+
+.user-save-btn:hover {
+  background-color: #059669;
+}
+
+.user-cancel-btn:hover {
+  background-color: #e9ecef;
+}
+
+.user-loading,
+.user-error {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+}
+
+.user-error {
+  color: #ef4444;
+}

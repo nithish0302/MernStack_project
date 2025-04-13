@@ -9,7 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const vehicleRoutes = require("./routes/vehicleRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const userRoutes = require("./routes/userRoutes");
-
+const vendorRoutes = require("./routes/vendorRoutes");
 const app = express();
 
 app.use(cors());
@@ -36,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/vech", vehicleRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/vendors", vendorRoutes);
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/bikerental";
 

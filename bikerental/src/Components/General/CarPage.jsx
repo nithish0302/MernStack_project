@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Header from "./Header.jsx";
 import "../../CarPage.css";
@@ -9,37 +10,63 @@ export default function CarPage() {
   const [selectedModel, setSelectedModel] = useState("Select Model");
   const [selectedPrice, setSelectedPrice] = useState("Select Price");
   const [cars, setCars] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({
+    makes: [],
+    models: [],
+    priceRanges: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCars = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
+        // Fetch cars data
+        const carsResponse = await axios.get(
           "http://localhost:8000/api/vech/cars",
-          {
-            params: { populate: "vendor" },
-          }
+          { params: { populate: "vendor" } }
         );
 
-        // Handle different possible response structures
-        const responseData = response.data;
-        const carsData =
-          responseData.data || // If data is nested in data property
-          responseData.cars || // If data is in cars property
-          responseData; // If data is the direct response
-
+        // Handle response structure
+        const responseData = carsResponse.data;
+        const carsData = responseData.data || responseData.cars || responseData;
         setCars(Array.isArray(carsData) ? carsData : []);
+
+        // Extract filter options from cars data
+        const uniqueMakes = [...new Set(carsData.map((car) => car.make))];
+        const uniqueModels = [...new Set(carsData.map((car) => car.name))];
+
+        // Generate price ranges based on car prices
+        const minPrice = Math.min(...carsData.map((car) => car.pricePerDay));
+        const maxPrice = Math.max(...carsData.map((car) => car.pricePerDay));
+        const priceRanges = generatePriceRanges(minPrice, maxPrice);
+
+        setFilterOptions({
+          makes: ["Select Make", ...uniqueMakes],
+          models: ["Select Model", ...uniqueModels],
+          priceRanges: ["Select Price", ...priceRanges],
+        });
+
         setLoading(false);
       } catch (err) {
-        setError("Failed to load cars. Please try again later.");
+        setError("Failed to load data. Please try again later.");
         setLoading(false);
-        console.error("Error fetching cars:", err);
+        console.error("Error fetching data:", err);
       }
     };
 
-    fetchCars();
+    fetchData();
   }, []);
+
+  // Helper function to generate price ranges
+  const generatePriceRanges = (min, max) => {
+    const ranges = [];
+    const step = 500; // ₹500 intervals
+    for (let i = Math.floor(min / step) * step; i < max; i += step) {
+      ranges.push(`₹${i} - ₹${i + step}`);
+    }
+    return ranges;
+  };
 
   if (loading) return <div className="loading">Loading cars...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -54,6 +81,7 @@ export default function CarPage() {
         setSelectedModel={setSelectedModel}
         selectedPrice={selectedPrice}
         setSelectedPrice={setSelectedPrice}
+        filterOptions={filterOptions}
       />
       <Vehicle
         vehicles={cars}
@@ -72,31 +100,8 @@ function CarSearchBar({
   setSelectedModel,
   selectedPrice,
   setSelectedPrice,
+  filterOptions,
 }) {
-  const makeOptions = [
-    "Select Make",
-    "Maruti Suzuki",
-    "Nissan",
-    "Land Rover",
-    "BMW",
-  ];
-
-  const modelOptions = [
-    "Select Model",
-    "Swift",
-    "Nissan Qashqai",
-    "Range Rover Velar",
-    "BMW M8 Competition",
-  ];
-
-  const priceOptions = [
-    "Select Price",
-    "₹1500 - ₹1800",
-    "₹1800 - ₹2100",
-    "₹2100 - ₹2500",
-    "₹2500 - ₹3000",
-  ];
-
   return (
     <div className="search-bar">
       <select
@@ -104,7 +109,7 @@ function CarSearchBar({
         value={selectedMake}
         onChange={(e) => setSelectedMake(e.target.value)}
       >
-        {makeOptions.map((make, index) => (
+        {filterOptions.makes.map((make, index) => (
           <option key={`make-${index}`} value={make}>
             {make}
           </option>
@@ -116,7 +121,7 @@ function CarSearchBar({
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
       >
-        {modelOptions.map((model, index) => (
+        {filterOptions.models.map((model, index) => (
           <option key={`model-${index}`} value={model}>
             {model}
           </option>
@@ -128,7 +133,7 @@ function CarSearchBar({
         value={selectedPrice}
         onChange={(e) => setSelectedPrice(e.target.value)}
       >
-        {priceOptions.map((price, index) => (
+        {filterOptions.priceRanges.map((price, index) => (
           <option key={`price-${index}`} value={price}>
             {price}
           </option>
@@ -144,11 +149,9 @@ function Vehicle({
   selectedModel,
   selectedPrice,
 }) {
-  // Ensure vehicles is always an array and handle potential undefined/null cases
   const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
 
   const filteredVehicles = safeVehicles.filter((vehicle) => {
-    // Skip if vehicle is null/undefined
     if (!vehicle) return false;
 
     const priceRange = selectedPrice.match(/\d+/g);

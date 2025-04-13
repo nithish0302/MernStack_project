@@ -9,37 +9,64 @@ export default function BikePage() {
   const [selectedModel, setSelectedModel] = useState("Select Model");
   const [selectedPrice, setSelectedPrice] = useState("Select Price");
   const [bikes, setBikes] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({
+    makes: [],
+    models: [],
+    priceRanges: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchBikes = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
+        // Fetch bikes data
+        const bikesResponse = await axios.get(
           "http://localhost:8000/api/vech/bikes",
-          {
-            params: { populate: "vendor" },
-          }
+          { params: { populate: "vendor" } }
         );
 
-        // Handle different possible response structures
-        const responseData = response.data;
+        // Handle response structure
+        const responseData = bikesResponse.data;
         const bikesData =
-          responseData.data || // If data is nested in data property
-          responseData.bikes || // If data is in bikes property
-          responseData; // If data is the direct response
-
+          responseData.data || responseData.bikes || responseData;
         setBikes(Array.isArray(bikesData) ? bikesData : []);
+
+        // Extract filter options from bikes data
+        const uniqueMakes = [...new Set(bikesData.map((bike) => bike.make))];
+        const uniqueModels = [...new Set(bikesData.map((bike) => bike.name))];
+
+        // Generate price ranges based on bike prices
+        const minPrice = Math.min(...bikesData.map((bike) => bike.pricePerDay));
+        const maxPrice = Math.max(...bikesData.map((bike) => bike.pricePerDay));
+        const priceRanges = generatePriceRanges(minPrice, maxPrice);
+
+        setFilterOptions({
+          makes: ["Select Make", ...uniqueMakes],
+          models: ["Select Model", ...uniqueModels],
+          priceRanges: ["Select Price", ...priceRanges],
+        });
+
         setLoading(false);
       } catch (err) {
-        setError("Failed to load bikes. Please try again later.");
+        setError("Failed to load data. Please try again later.");
         setLoading(false);
-        console.error("Error fetching bikes:", err);
+        console.error("Error fetching data:", err);
       }
     };
 
-    fetchBikes();
+    fetchData();
   }, []);
+
+  // Helper function to generate price ranges
+  const generatePriceRanges = (min, max) => {
+    const ranges = [];
+    const step = 100; // ₹100 intervals for bikes
+    for (let i = Math.floor(min / step) * step; i < max; i += step) {
+      ranges.push(`₹${i} - ₹${i + step}`);
+    }
+    return ranges;
+  };
 
   if (loading) return <div className="loading">Loading bikes...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -54,6 +81,7 @@ export default function BikePage() {
         setSelectedModel={setSelectedModel}
         selectedPrice={selectedPrice}
         setSelectedPrice={setSelectedPrice}
+        filterOptions={filterOptions}
       />
       <Vehicle
         vehicles={bikes}
@@ -73,32 +101,8 @@ function BikeSearchBar({
   setSelectedModel,
   selectedPrice,
   setSelectedPrice,
+  filterOptions,
 }) {
-  const makeOptions = [
-    "Select Make",
-    "Kawasaki",
-    "BMW",
-    "KTM",
-    "Harley Davidson",
-    "Royal Enfield",
-  ];
-
-  const modelOptions = [
-    "Select Model",
-    "Z900",
-    "BMW 1000 RR",
-    "Duke",
-    "Harley Davidson",
-    "Hunter 350",
-  ];
-
-  const priceOptions = [
-    "Select Price",
-    "₹1500 - ₹1600",
-    "₹1600 - ₹1700",
-    "₹1700 - ₹1800",
-  ];
-
   return (
     <div className="search-bar">
       <select
@@ -106,7 +110,7 @@ function BikeSearchBar({
         value={selectedMake}
         onChange={(e) => setSelectedMake(e.target.value)}
       >
-        {makeOptions.map((make, index) => (
+        {filterOptions.makes.map((make, index) => (
           <option key={`make-${index}`} value={make}>
             {make}
           </option>
@@ -118,7 +122,7 @@ function BikeSearchBar({
         value={selectedModel}
         onChange={(e) => setSelectedModel(e.target.value)}
       >
-        {modelOptions.map((model, index) => (
+        {filterOptions.models.map((model, index) => (
           <option key={`model-${index}`} value={model}>
             {model}
           </option>
@@ -130,7 +134,7 @@ function BikeSearchBar({
         value={selectedPrice}
         onChange={(e) => setSelectedPrice(e.target.value)}
       >
-        {priceOptions.map((price, index) => (
+        {filterOptions.priceRanges.map((price, index) => (
           <option key={`price-${index}`} value={price}>
             {price}
           </option>

@@ -3,6 +3,7 @@ const Vehicle = require("../models/vehicle");
 const Vendor = require("../models/vendor");
 const User = require("../models/user");
 
+// Create a new booking
 exports.createBooking = async (req, res) => {
   try {
     const {
@@ -63,7 +64,7 @@ exports.createBooking = async (req, res) => {
       });
     }
 
-    // Create new booking
+    // Create new booking with statusOfVendor
     const booking = new Booking({
       userId,
       userName: user.name || bookedName,
@@ -81,6 +82,7 @@ exports.createBooking = async (req, res) => {
       bookedPhone,
       bookedCity,
       status: "ongoing",
+      statusOfVendor: "pending", // New field added here
     });
 
     // Save the booking
@@ -110,63 +112,139 @@ exports.getUserBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ userId: req.params.userId }).sort({
       createdAt: -1,
-    }); // Sort by newest first
+    });
 
-    // Transform the data to match frontend expectations
-    const transformedBookings = bookings.map((booking) => ({
-      _id: booking._id,
-      vehicleName: booking.vehicleName,
-      startDate: booking.startDate,
-      endDate: booking.endDate,
-      totalAmount: booking.totalAmount,
-      status: booking.status,
-      createdAt: booking.createdAt,
-      // Include any other fields your frontend needs
-      bookedName: booking.bookedName,
-      bookedPhone: booking.bookedPhone,
-    }));
-
-    res.status(200).json(transformedBookings);
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      data: bookings,
+    });
   } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err.message,
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user bookings",
+      error: err.message,
     });
   }
 };
 
+// Get pending bookings for a vendor (new requests)
+// In your bookingController.js
+exports.getVendorRequests = async (req, res) => {
+  try {
+    const bookings = await Booking.find({
+      vendorId: req.params.vendorId,
+      statusOfVendor: "pending", // This filters only pending requests
+    })
+      .sort({ createdAt: -1 })
+      .populate("userId", "name email phone")
+      .populate("vehicleId", "name imageUrl");
+
+    console.log("Found bookings:", bookings); // Add this log
+
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      data: bookings,
+    });
+  } catch (err) {
+    console.error("Error in getVendorRequests:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch vendor requests",
+      error: err.message,
+    });
+  }
+};
+// Update booking status (vendor accepting/rejecting)
+exports.updateBookingStatus = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    if (!["accepted", "cancelled"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status. Must be 'accepted' or 'cancelled'",
+      });
+    }
+
+    // Update booking status
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { statusOfVendor: status },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // If cancelled, make vehicle available again
+    if (status === "cancelled") {
+      await Vehicle.findByIdAndUpdate(
+        booking.vehicleId,
+        { isAvailable: true },
+        { new: true }
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Booking ${status} successfully`,
+      data: booking,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update booking status",
+      error: err.message,
+    });
+  }
+};
+
+// Cancel a booking
 exports.cancelBooking = async (req, res) => {
   try {
-    // First update the booking status
     const booking = await Booking.findByIdAndUpdate(
       req.params.bookingId,
       {
         status: "cancelled",
-        paymentStatus: true, // Changed to true
-        returnStatus: true, // Changed to true
+        statusOfVendor: "cancelled",
+        paymentStatus: true,
+        returnStatus: true,
       },
       { new: true }
-    ).populate("vehicleId"); // Populate vehicle data
+    ).populate("vehicleId");
 
     if (!booking) {
       return res.status(404).json({
-        status: "fail",
-        message: "No booking found with that ID",
+        success: false,
+        message: "Booking not found",
       });
     }
 
-    // Then update the vehicle availability
+    // Make vehicle available again
     await Vehicle.findByIdAndUpdate(
       booking.vehicleId._id,
       { isAvailable: true },
       { new: true }
     );
 
-    res.status(200).json(booking);
+    res.status(200).json({
+      success: true,
+      message: "Booking cancelled successfully",
+      data: booking,
+    });
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err.message,
+    res.status(500).json({
+      success: false,
+      message: "Failed to cancel booking",
+      error: err.message,
     });
   }
 };
