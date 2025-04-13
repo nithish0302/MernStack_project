@@ -1,11 +1,11 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const Vehicle = require("../models/vehicle");
 const {
   addVehicle,
   getCars,
-  getBikes, // Make sure this is imported
+  getBikes,
+  getVendorVehicleCount,
 } = require("../controllers/vehicleController");
 
 const router = express.Router();
@@ -34,7 +34,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 5 * 1024 * 1024,
   },
 });
 
@@ -47,33 +47,6 @@ router.get("/cars", getCars);
 router.get("/bikes", getBikes);
 
 // Vendor vehicle count endpoint
-router.get("/count/:vendorId", async (req, res) => {
-  try {
-    const { vendorId } = req.params;
-
-    // Validate vendorId format
-    if (!ObjectId.isValid(vendorId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid vendor ID format",
-      });
-    }
-
-    const vehicles = await Vehicle.find({ vendor: vendorId });
-
-    res.json({
-      success: true,
-      count: vehicles.length,
-      data: vehicles,
-    });
-  } catch (err) {
-    console.error("Error fetching vendor vehicles:", err);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: process.env.NODE_ENV === "development" ? err.message : undefined,
-    });
-  }
-});
+router.get("/count/:vendorId", getVendorVehicleCount);
 
 module.exports = router;

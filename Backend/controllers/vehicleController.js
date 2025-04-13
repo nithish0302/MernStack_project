@@ -1,4 +1,6 @@
 const Vehicle = require("../models/vehicle");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 const addVehicle = async (req, res) => {
   try {
@@ -129,8 +131,38 @@ const getBikes = async (req, res) => {
   }
 };
 
+const getVendorVehicleCount = async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    // Validate vendorId format
+    if (!ObjectId.isValid(vendorId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vendor ID format",
+      });
+    }
+
+    const vehicles = await Vehicle.find({ vendor: vendorId });
+
+    res.json({
+      success: true,
+      count: vehicles.length,
+      data: vehicles,
+    });
+  } catch (err) {
+    console.error("Error fetching vendor vehicles:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+  }
+};
+
 module.exports = {
   addVehicle,
   getCars,
   getBikes,
+  getVendorVehicleCount,
 };

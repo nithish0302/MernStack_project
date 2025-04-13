@@ -1,27 +1,4 @@
-// const mongoose = require("mongoose");
 
-// const bookingSchema = new mongoose.Schema({
-//   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-//   userName: String,
-//   vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "Vendor" },
-//   vendorName: String,
-//   vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" },
-//   vehicleName: String,
-//   startDate: Date,
-//   endDate: Date,
-//   totalAmount: Number,
-//   paymentStatus: Boolean,
-//   returnStatus: Boolean,
-//   // Add these new fields
-//   bookedName: { type: String, required: true },
-//   bookedEmail: { type: String, required: true },
-//   bookedPhone: { type: String, required: true },
-//   bookedCity: { type: String, required: true },
-//   createdAt: { type: Date, default: Date.now },
-// });
-
-// module.exports =
-//   mongoose.models.Booking || mongoose.model("Booking", bookingSchema);
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
@@ -49,6 +26,7 @@ const bookingSchema = new mongoose.Schema({
   bookedPhone: { type: String, required: true },
   bookedCity: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  status: { type: String, default: "ongoing" },
 });
 
 module.exports =

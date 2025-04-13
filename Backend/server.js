@@ -8,6 +8,8 @@ const fs = require("fs");
 const authRoutes = require("./routes/authRoutes");
 const vehicleRoutes = require("./routes/vehicleRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const userRoutes = require("./routes/userRoutes");
+
 const app = express();
 
 app.use(cors());
@@ -33,6 +35,7 @@ const upload = multer({ storage });
 app.use("/api/auth", authRoutes);
 app.use("/api/vech", vehicleRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/users", userRoutes);
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/bikerental";
 
