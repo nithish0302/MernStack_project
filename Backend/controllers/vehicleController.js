@@ -159,10 +159,128 @@ const getVendorVehicleCount = async (req, res) => {
     });
   }
 };
+// Get cars by vendor ID
+const getCarsByVendor = async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    if (!ObjectId.isValid(vendorId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vendor ID format",
+      });
+    }
+    // console.log("hi bro");
+    const cars = await Vehicle.find({
+      type: "Car",
+      vendor: new ObjectId(vendorId),
+    }).populate("vendor", "name email phone");
+
+    if (!cars || cars.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No cars found for this vendor",
+        suggestion: "Ensure the vendor has added cars",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Cars by vendor retrieved successfully",
+      count: cars.length,
+      data: cars,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("Error fetching vendor cars:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve cars by vendor",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+  }
+};
+const getBikesByVendor = async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    if (!ObjectId.isValid(vendorId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vendor ID format",
+      });
+    }
+
+    const bikes = await Vehicle.find({
+      type: "Bike",
+      vendor: new ObjectId(vendorId),
+    }).populate("vendor", "name email phone");
+
+    if (!bikes || bikes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No bikes found for this vendor",
+        suggestion: "Ensure the vendor has added bikes",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Bikes by vendor retrieved successfully",
+      count: bikes.length,
+      data: bikes,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("Error fetching vendor bikes:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve bikes by vendor",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+  }
+};
+const deleteVehicle = async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+
+    if (!ObjectId.isValid(vehicleId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vehicle ID format",
+      });
+    }
+
+    const deletedVehicle = await Vehicle.findByIdAndDelete(vehicleId);
+
+    if (!deletedVehicle) {
+      return res.status(404).json({
+        success: false,
+        message: "Vehicle not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Vehicle deleted successfully",
+      data: deletedVehicle,
+    });
+  } catch (err) {
+    console.error("Error deleting vehicle:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete vehicle",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+  }
+};
 
 module.exports = {
   addVehicle,
   getCars,
   getBikes,
   getVendorVehicleCount,
+  getCarsByVendor,
+  getBikesByVendor,
+  deleteVehicle,
 };

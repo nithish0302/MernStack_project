@@ -20,23 +20,32 @@ export default function BikePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch bikes data
-        const bikesResponse = await axios.get(
-          "http://localhost:8000/api/vech/bikes",
-          { params: { populate: "vendor" } }
-        );
+        const role = localStorage.getItem("userRole");
+        const id = localStorage.getItem("vendorId");
 
-        // Handle response structure
+        let bikesResponse;
+        if (role === "vendor" && id) {
+          // Vendor: Fetch bikes by vendor ID using route parameter
+          bikesResponse = await axios.get(
+            `http://localhost:8000/api/vech/bikes/${id}`
+          );
+        } else {
+          // User: Fetch all bikes
+          bikesResponse = await axios.get(
+            "http://localhost:8000/api/vech/bikes",
+            { params: { populate: "vendor" } }
+          );
+        }
+
         const responseData = bikesResponse.data;
         const bikesData =
           responseData.data || responseData.bikes || responseData;
         setBikes(Array.isArray(bikesData) ? bikesData : []);
 
-        // Extract filter options from bikes data
+        // Extract filter options from bikes
         const uniqueMakes = [...new Set(bikesData.map((bike) => bike.make))];
         const uniqueModels = [...new Set(bikesData.map((bike) => bike.name))];
 
-        // Generate price ranges based on bike prices
         const minPrice = Math.min(...bikesData.map((bike) => bike.pricePerDay));
         const maxPrice = Math.max(...bikesData.map((bike) => bike.pricePerDay));
         const priceRanges = generatePriceRanges(minPrice, maxPrice);
@@ -58,7 +67,6 @@ export default function BikePage() {
     fetchData();
   }, []);
 
-  // Helper function to generate price ranges
   const generatePriceRanges = (min, max) => {
     const ranges = [];
     const step = 100; // ₹100 intervals for bikes
@@ -93,6 +101,8 @@ export default function BikePage() {
     </>
   );
 }
+
+// BikeSearchBar and Vehicle components remain the same as in your previous implementation
 
 function BikeSearchBar({
   selectedMake,

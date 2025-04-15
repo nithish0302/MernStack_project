@@ -127,3 +127,11 @@
   cursor: pointer;
   padding: 0;
 }
+
+.delete-button {
+  background-color: #ff4444;
+}
+
+.delete-button:hover {
+  background-color: #cc0000;
+}

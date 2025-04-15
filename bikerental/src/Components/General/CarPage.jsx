@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Header from "./Header.jsx";
 import "../../CarPage.css";
@@ -21,22 +20,33 @@ export default function CarPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch cars data
-        const carsResponse = await axios.get(
-          "http://localhost:8000/api/vech/cars",
-          { params: { populate: "vendor" } }
-        );
+        const role = localStorage.getItem("userRole");
+        const id = localStorage.getItem("vendorId");
 
-        // Handle response structure
+        let carsResponse;
+        if (role === "vendor" && id) {
+          // Vendor: Fetch cars by vendor ID
+          carsResponse = await axios.get(
+            `http://localhost:8000/api/vech/cars/${id}`
+          );
+        } else {
+          // User: Fetch all cars
+          carsResponse = await axios.get(
+            "http://localhost:8000/api/vech/cars",
+            {
+              params: { populate: "vendor" },
+            }
+          );
+        }
+
         const responseData = carsResponse.data;
         const carsData = responseData.data || responseData.cars || responseData;
         setCars(Array.isArray(carsData) ? carsData : []);
 
-        // Extract filter options from cars data
+        // Extract filter options from cars
         const uniqueMakes = [...new Set(carsData.map((car) => car.make))];
         const uniqueModels = [...new Set(carsData.map((car) => car.name))];
 
-        // Generate price ranges based on car prices
         const minPrice = Math.min(...carsData.map((car) => car.pricePerDay));
         const maxPrice = Math.max(...carsData.map((car) => car.pricePerDay));
         const priceRanges = generatePriceRanges(minPrice, maxPrice);

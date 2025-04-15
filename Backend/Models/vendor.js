@@ -21,7 +21,6 @@ const VendorSchema = new mongoose.Schema(
   { collection: "Vendor" }
 );
 
-// Check if the model already exists before defining it
 const Vendor = mongoose.models.Vendor || mongoose.model("Vendor", VendorSchema);
 
 module.exports = Vendor;
