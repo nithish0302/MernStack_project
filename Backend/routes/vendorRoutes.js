@@ -5,8 +5,7 @@ const {
   updateVendorProfile,
 } = require("../controllers/vendorController");
 
-// ✅ Fix: Import the middleware as a default import
-const isVendorLoggedIn = require("../middleware/authMiddleware");
+const isVendorLoggedIn = require("../Middleware/authMiddleware");
 
 // Protected routes
 router.get("/profile", isVendorLoggedIn, getVendorProfile);

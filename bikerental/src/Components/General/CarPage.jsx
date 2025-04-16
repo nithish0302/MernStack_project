@@ -25,12 +25,10 @@ export default function CarPage() {
 
         let carsResponse;
         if (role === "vendor" && id) {
-          // Vendor: Fetch cars by vendor ID
           carsResponse = await axios.get(
             `http://localhost:8000/api/vech/cars/${id}`
           );
         } else {
-          // User: Fetch all cars
           carsResponse = await axios.get(
             "http://localhost:8000/api/vech/cars",
             {
@@ -43,7 +41,6 @@ export default function CarPage() {
         const carsData = responseData.data || responseData.cars || responseData;
         setCars(Array.isArray(carsData) ? carsData : []);
 
-        // Extract filter options from cars
         const uniqueMakes = [...new Set(carsData.map((car) => car.make))];
         const uniqueModels = [...new Set(carsData.map((car) => car.name))];
 
@@ -68,7 +65,6 @@ export default function CarPage() {
     fetchData();
   }, []);
 
-  // Helper function to generate price ranges
   const generatePriceRanges = (min, max) => {
     const ranges = [];
     const step = 500; // ₹500 intervals

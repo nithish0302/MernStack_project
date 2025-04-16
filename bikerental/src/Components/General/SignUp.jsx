@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
-  const role = location.state?.role || "customer"; // Default to "customer"
+  const role = location.state?.role || "customer"; 
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +30,7 @@ export default function SignUp() {
       const data = await response.json();
       if (response.ok) {
         alert("Account created successfully!");
-        navigate("/signin"); // Redirect to sign-in page
+        navigate("/signin");
       } else {
         alert(data.message || "Error signing up");
       }

@@ -13,7 +13,6 @@ const {
 
 const router = express.Router();
 
-// Configure multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -24,7 +23,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter for image uploads
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -41,15 +39,12 @@ const upload = multer({
   },
 });
 
-// Vehicle CRUD endpoints
 router.post("/bikes", upload.single("image"), addVehicle);
 router.post("/cars", upload.single("image"), addVehicle);
 
-// Vehicle listing endpoints
 router.get("/cars", getCars);
 router.get("/bikes", getBikes);
 
-// Vendor vehicle count endpoint
 router.get("/count/:vendorId", getVendorVehicleCount);
 router.get("/cars/:vendorId", getCarsByVendor);
 router.get("/bikes/:vendorId", getBikesByVendor);

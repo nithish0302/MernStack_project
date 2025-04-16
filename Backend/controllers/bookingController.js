@@ -128,19 +128,18 @@ exports.getUserBookings = async (req, res) => {
   }
 };
 
-// Get pending bookings for a vendor (new requests)
-// In your bookingController.js
+
 exports.getVendorRequests = async (req, res) => {
   try {
     const bookings = await Booking.find({
       vendorId: req.params.vendorId,
-      statusOfVendor: "pending", // This filters only pending requests
+      statusOfVendor: "pending", 
     })
       .sort({ createdAt: -1 })
       .populate("userId", "name email phone")
       .populate("vehicleId", "name imageUrl");
 
-    console.log("Found bookings:", bookings); // Add this log
+  
 
     res.status(200).json({
       success: true,
@@ -156,13 +155,11 @@ exports.getVendorRequests = async (req, res) => {
     });
   }
 };
-// Update booking status (vendor accepting/rejecting)
 exports.updateBookingStatus = async (req, res) => {
   try {
     const { bookingId } = req.params;
     const { status } = req.body;
 
-    // Validate status
     if (!["accepted", "cancelled"].includes(status)) {
       return res.status(400).json({
         success: false,
@@ -170,7 +167,6 @@ exports.updateBookingStatus = async (req, res) => {
       });
     }
 
-    // Update booking status
     const booking = await Booking.findByIdAndUpdate(
       bookingId,
       { statusOfVendor: status },
@@ -184,7 +180,6 @@ exports.updateBookingStatus = async (req, res) => {
       });
     }
 
-    // If cancelled, make vehicle available again
     if (status === "cancelled") {
       await Vehicle.findByIdAndUpdate(
         booking.vehicleId,
@@ -207,7 +202,6 @@ exports.updateBookingStatus = async (req, res) => {
   }
 };
 
-// Cancel a booking
 exports.cancelBooking = async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
@@ -228,7 +222,6 @@ exports.cancelBooking = async (req, res) => {
       });
     }
 
-    // Make vehicle available again
     await Vehicle.findByIdAndUpdate(
       booking.vehicleId._id,
       { isAvailable: true },

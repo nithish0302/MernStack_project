@@ -4,7 +4,6 @@ const authMiddleware = require("../Middleware/authMiddleware");
 
 exports.getUserProfile = async (req, res) => {
   try {
-    // Get user ID from the authenticated request
     const user = await User.findById(req.user.id).select("-password");
 
     if (!user) {

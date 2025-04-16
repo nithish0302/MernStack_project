@@ -99,7 +99,7 @@ const VendorFrontPage = () => {
   const [vehicles, setVehicles] = useState([]);
   const [bikeCount, setBikeCount] = useState(0);
   const [carCount, setCarCount] = useState(0);
-  const [rentedCount, setRentedCount] = useState(0); // Added rented count state
+  const [rentedCount, setRentedCount] = useState(0);
   const vendorId = localStorage.getItem("vendorId");
 
   useEffect(() => {
@@ -138,7 +138,7 @@ const VendorFrontPage = () => {
   };
 
   const handleNewRequests = () => {
-    navigate("/vendor-requests"); // Added navigation for new requests
+    navigate("/vendor-requests"); 
   };
 
   return (

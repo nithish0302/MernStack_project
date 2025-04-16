@@ -23,7 +23,6 @@ function AddBike() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Validate seats (must be exactly 2)
     if (name === "seats") {
       const seatValue = parseInt(value);
       if (isNaN(seatValue) || seatValue !== 2) {
@@ -33,7 +32,6 @@ function AddBike() {
       setErrors({ ...errors, seats: "" });
     }
 
-    // Validate price (must be positive number)
     if (name === "pricePerDay") {
       const priceValue = parseFloat(value);
       if (isNaN(priceValue)) {
@@ -54,7 +52,6 @@ function AddBike() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate image file type
     if (!file.type.match("image.*")) {
       setErrors({ ...errors, image: "Please select an image file" });
       return;
@@ -66,7 +63,6 @@ function AddBike() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Final validation before submit
     const seatValue = parseInt(bike.seats);
     if (isNaN(seatValue)) {
       setErrors({ ...errors, seats: "Please enter a valid number" });
@@ -117,7 +113,6 @@ function AddBike() {
       if (response.ok) {
         alert("Bike added successfully!");
 
-        // Reset form
         setBike({
           name: "",
           type: "Bike",
@@ -127,7 +122,6 @@ function AddBike() {
           pricePerDay: "",
           image: null,
         });
-        // document.getElementById("bikeFile").value = "";
         setErrors({
           seats: "",
           pricePerDay: "",
@@ -150,7 +144,6 @@ function AddBike() {
         <div className="AddBikeContainer">
           <h4 className="AddBikeTitle">Add New Bike</h4>
           <form onSubmit={handleSubmit} className="BikeForm">
-            {/* Bike Name */}
             <div className="BikeField">
               <label className="BikeLabel">Bike Name:</label>
               <input
@@ -163,7 +156,6 @@ function AddBike() {
               />
             </div>
 
-            {/* Fuel Type */}
             <div className="BikeField">
               <label className="BikeLabel">Fuel Type:</label>
               <select
@@ -177,7 +169,6 @@ function AddBike() {
               </select>
             </div>
 
-            {/* Gear Type */}
             <div className="BikeField">
               <label className="BikeLabel">Gear Type:</label>
               <select
@@ -191,7 +182,6 @@ function AddBike() {
               </select>
             </div>
 
-            {/* Seats */}
             <div className="BikeField">
               <label className="BikeLabel">Seats:</label>
               <input
@@ -209,7 +199,6 @@ function AddBike() {
               )}
             </div>
 
-            {/* Price per Day */}
             <div className="BikeField">
               <label className="BikeLabel">Price Per Day (₹):</label>
               <input
@@ -227,7 +216,6 @@ function AddBike() {
               )}
             </div>
 
-            {/* Image */}
             <div className="BikeField">
               <label className="BikeLabel">Bike Image:</label>
               <div className="BikeFileWrapper">

@@ -19,14 +19,14 @@ export default function VendorRequestsPage() {
           return;
         }
 
-        console.log("Fetching requests for vendor:", vendorId); // Log vendorId
+        console.log("Fetching requests for vendor:", vendorId); 
 
         const response = await axios.get(
           `http://localhost:8000/api/bookings/vendor/${vendorId}/requests`
         );
 
-        console.log("Full API response:", response); // Log full response
-        console.log("Response data:", response.data); // Log response data
+        console.log("Full API response:", response); 
+        console.log("Response data:", response.data); 
 
         setRequests(response.data.data || []);
         setLoading(false);

@@ -7,7 +7,6 @@ export default function ForgotPassword() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Reset link sent to:", email);
-    // Add logic to send reset email
   };
 
   return (

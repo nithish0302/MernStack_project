@@ -18,7 +18,6 @@ function AddCar() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Validate seats (2 ≤ value ≤ 5)
     if (name === "seats") {
       const seatValue = parseInt(value);
       if (isNaN(seatValue)) {
@@ -42,7 +41,6 @@ function AddCar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Final validation
     const seatValue = parseInt(car.seats);
     if (seatValue < 2 || seatValue > 5) {
       alert("Seats must be between 2 and 5 (inclusive)");
@@ -87,7 +85,6 @@ function AddCar() {
           pricePerDay: "",
           image: null,
         });
-        // document.getElementById("carFile").value = "";
       } else {
         const errorData = await response.json();
         alert(`Error adding car: ${errorData.message || "Unknown error"}`);
@@ -118,7 +115,6 @@ function AddCar() {
               />
             </div>
 
-            {/* Fuel Type */}
             <div className="BikeField">
               <label className="BikeLabel">Fuel Type:</label>
               <select
@@ -133,7 +129,6 @@ function AddCar() {
               </select>
             </div>
 
-            {/* Gear Type */}
             <div className="BikeField">
               <label className="BikeLabel">Gear Type:</label>
               <select
@@ -147,7 +142,6 @@ function AddCar() {
               </select>
             </div>
 
-            {/* Seats (2-5) */}
             <div className="BikeField">
               <label className="BikeLabel">Seats (2-5):</label>
               <input
@@ -162,7 +156,6 @@ function AddCar() {
               />
             </div>
 
-            {/* Price */}
             <div className="BikeField">
               <label className="BikeLabel">Price Per Day (₹):</label>
               <input
@@ -176,7 +169,6 @@ function AddCar() {
               />
             </div>
 
-            {/* Image Upload */}
             <div className="BikeField">
               <label className="BikeLabel">Car Image:</label>
               <div className="BikeFileWrapper">

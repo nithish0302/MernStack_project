@@ -12,7 +12,6 @@ function OrderConfirmation() {
   return (
     <div className="confirmation-page">
       <div className="confirmation-card">
-        {/* <div className="checkmark">✓</div> */}
         <h1>Your Order is Booked!</h1>
         <p className="confirmation-text">
           Thank you for choosing us. Your vehicle is reserved and we've sent the

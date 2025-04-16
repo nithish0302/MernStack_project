@@ -8,7 +8,6 @@ const addVehicle = async (req, res) => {
       req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    // Validate required fields
     const requiredFields = {
       name: "Name",
       type: "Type",
@@ -31,7 +30,6 @@ const addVehicle = async (req, res) => {
       });
     }
 
-    // Validate vehicle type
     if (!["Car", "Bike"].includes(type)) {
       return res.status(400).json({
         success: false,
@@ -39,7 +37,6 @@ const addVehicle = async (req, res) => {
       });
     }
 
-    // Create new vehicle
     const newVehicle = new Vehicle({
       name,
       type,
@@ -159,7 +156,6 @@ const getVendorVehicleCount = async (req, res) => {
     });
   }
 };
-// Get cars by vendor ID
 const getCarsByVendor = async (req, res) => {
   try {
     const { vendorId } = req.params;

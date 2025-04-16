@@ -7,7 +7,6 @@ export default function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Default role: 'user' instead of 'customer' to match backend schema
   const role = location.state?.role?.toLowerCase() || "user";
 
   const [email, setEmail] = useState("");
@@ -26,8 +25,7 @@ export default function SignIn() {
       console.log(role);
 
       const data = await response.json();
-      // console.log(data.user.id);
-      // console.log(data);
+   
       if (response.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userRole", data.role);
@@ -35,7 +33,6 @@ export default function SignIn() {
         localStorage.setItem("vendorId", data.user.id);
         alert("Login Successful");
 
-        // Role-based redirect
         switch (data.role) {
           case "vendor":
             navigate("/vendor");
@@ -44,7 +41,7 @@ export default function SignIn() {
             navigate("/admin");
             break;
           default:
-            navigate("/customer"); // assuming /customer is for users
+            navigate("/customer"); 
         }
       } else {
         setError(data.message || "Login failed");

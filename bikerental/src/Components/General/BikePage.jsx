@@ -25,7 +25,6 @@ export default function BikePage() {
 
         let bikesResponse;
         if (role === "vendor" && id) {
-          // Vendor: Fetch bikes by vendor ID using route parameter
           bikesResponse = await axios.get(
             `http://localhost:8000/api/vech/bikes/${id}`
           );
@@ -42,7 +41,6 @@ export default function BikePage() {
           responseData.data || responseData.bikes || responseData;
         setBikes(Array.isArray(bikesData) ? bikesData : []);
 
-        // Extract filter options from bikes
         const uniqueMakes = [...new Set(bikesData.map((bike) => bike.make))];
         const uniqueModels = [...new Set(bikesData.map((bike) => bike.name))];
 
@@ -69,7 +67,7 @@ export default function BikePage() {
 
   const generatePriceRanges = (min, max) => {
     const ranges = [];
-    const step = 100; // ₹100 intervals for bikes
+    const step = 100; 
     for (let i = Math.floor(min / step) * step; i < max; i += step) {
       ranges.push(`₹${i} - ₹${i + step}`);
     }
@@ -102,7 +100,6 @@ export default function BikePage() {
   );
 }
 
-// BikeSearchBar and Vehicle components remain the same as in your previous implementation
 
 function BikeSearchBar({
   selectedMake,
