@@ -33,25 +33,9 @@ function OrderComponent() {
     city: "",
     vehicleName: vehicleData?.name || "",
     vehicleType: vehicleData?.type || "",
-    pricePerDay: vehicleData?.pricePerDay || "",
-    totalPrice: vehicleData?.pricePerDay || "",
+    pricePerKm: vehicleData?.pricePerKm || "",
+    totalPrice: vehicleData?.pricePerKm || "",
   });
-
-  useEffect(() => {
-    if (vehicleData?.pricePerDay && formData.pickupDate && formData.dropDate) {
-      const pickup = new Date(formData.pickupDate);
-      const drop = new Date(formData.dropDate);
-      const diffTime = drop.getTime() - pickup.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      const total = diffDays * vehicleData.pricePerDay;
-      setFormData((prev) => ({
-        ...prev,
-        days: diffDays.toString(),
-        totalPrice: total,
-      }));
-    }
-  }, [formData.pickupDate, formData.dropDate, vehicleData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -102,10 +86,10 @@ function OrderComponent() {
         startDate: formData.pickupDate,
         endDate: formData.dropDate,
         totalAmount: formData.totalPrice,
-        bookedName: formData.name, // New field
-        bookedEmail: formData.email, // New field
-        bookedPhone: formData.phone, // New field
-        bookedCity: formData.city, // New field
+        bookedName: formData.name,
+        bookedEmail: formData.email,
+        bookedPhone: formData.phone,
+        bookedCity: formData.city,
       };
 
       const response = await axios.post(
@@ -131,6 +115,7 @@ function OrderComponent() {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="order-container">
       <div className="order-header">
@@ -140,7 +125,10 @@ function OrderComponent() {
       {vehicleData ? (
         <div className="vehicle-display-section">
           <div className="vehicle-details-card">
-            <img src={vehicleData.imageUrl} alt={vehicleData.name} />
+            <img
+              src={`http://localhost:8000${vehicleData.imageUrl}`}
+              alt={vehicleData.name}
+            />
             <div className="vehicle-info">
               <h3>{vehicleData.name}</h3>
               <div className="specs">
@@ -151,7 +139,7 @@ function OrderComponent() {
                   <span>Fuel:</span> {vehicleData.fuelType}
                 </p>
                 <p>
-                  <span>Price/Day:</span> ₹{vehicleData.pricePerDay}
+                  <span>Price/Km:</span> ₹{vehicleData.pricePerKm}
                 </p>
               </div>
             </div>
@@ -245,8 +233,7 @@ function OrderComponent() {
         </div>
 
         <div className="form-summary">
-          <h4>Total Days: {formData.days}</h4>
-          <h4>Total Price: ₹{formData.totalPrice}</h4>
+          <h4> Price: ₹{formData.totalPrice}/km</h4>
         </div>
 
         <button type="submit" className="submit-btn" disabled={isSubmitting}>

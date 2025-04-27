@@ -73,3 +73,21 @@
   font-size: 1.1rem;
   color: #666;
 }
+.load-more {
+  margin: 20px auto;
+  display: block;
+  padding: 10px 20px;
+  background-color: #2b59c3;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease-in-out;
+  font-family: "Radio Canada", serif;
+}
+
+.load-more:hover {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  transform: scale(1.05);
+}

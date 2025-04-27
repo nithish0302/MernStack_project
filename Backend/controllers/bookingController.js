@@ -3,7 +3,6 @@ const Vehicle = require("../models/vehicle");
 const Vendor = require("../models/vendor");
 const User = require("../models/user");
 
-// Create a new booking
 exports.createBooking = async (req, res) => {
   try {
     const {

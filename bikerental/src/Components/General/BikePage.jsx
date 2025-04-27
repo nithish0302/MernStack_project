@@ -34,6 +34,7 @@ export default function BikePage() {
             "http://localhost:8000/api/vech/bikes",
             { params: { populate: "vendor" } }
           );
+          console.log(bikesResponse);
         }
 
         const responseData = bikesResponse.data;
@@ -44,8 +45,8 @@ export default function BikePage() {
         const uniqueMakes = [...new Set(bikesData.map((bike) => bike.make))];
         const uniqueModels = [...new Set(bikesData.map((bike) => bike.name))];
 
-        const minPrice = Math.min(...bikesData.map((bike) => bike.pricePerDay));
-        const maxPrice = Math.max(...bikesData.map((bike) => bike.pricePerDay));
+        const minPrice = Math.min(...bikesData.map((bike) => bike.pricePerKm));
+        const maxPrice = Math.max(...bikesData.map((bike) => bike.pricePerKm));
         const priceRanges = generatePriceRanges(minPrice, maxPrice);
 
         setFilterOptions({
@@ -67,7 +68,7 @@ export default function BikePage() {
 
   const generatePriceRanges = (min, max) => {
     const ranges = [];
-    const step = 100; 
+    const step = 100;
     for (let i = Math.floor(min / step) * step; i < max; i += step) {
       ranges.push(`₹${i} - ₹${i + step}`);
     }
@@ -99,7 +100,6 @@ export default function BikePage() {
     </>
   );
 }
-
 
 function BikeSearchBar({
   selectedMake,
@@ -170,7 +170,7 @@ function Vehicle({
       (selectedMake === "Select Make" || vehicle.make === selectedMake) &&
       (selectedModel === "Select Model" || vehicle.name === selectedModel) &&
       (selectedPrice === "Select Price" ||
-        (vehicle.pricePerDay >= minPrice && vehicle.pricePerDay <= maxPrice))
+        (vehicle.pricePerKm >= minPrice && vehicle.pricePerKm <= maxPrice))
     );
   });
 
@@ -185,6 +185,7 @@ function Vehicle({
               ...vehicle,
               imageUrl: vehicle.image || "/default-bike.jpg",
               make: vehicle.make || "Unknown Make",
+              pricePerKm: vehicle.pricePerKm, // Make sure to use pricePerKm
             }}
           />
         ))

@@ -14,6 +14,7 @@ const getCollection = (role) => {
   }
 };
 
+
 exports.signup = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -21,13 +22,27 @@ exports.signup = async (req, res) => {
 
     const existingUser = await Collection.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const newUser = new Collection({ name, email, password, role });
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    const token = jwt.sign({ id: newUser._id, role }, "jwt_secret", {
+      expiresIn: "1h",
+    });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      role,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({ error: "Error registering user" });

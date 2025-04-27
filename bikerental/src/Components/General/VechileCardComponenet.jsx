@@ -1,4 +1,3 @@
-
 import React from "react";
 import { CgArrowTopRight } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +14,7 @@ const VehicleCardComponent = ({ vc, vehicleId }) => {
           id: vehicleId,
           name: vc.name,
           type: vc.type,
-          pricePerDay: vc.pricePerDay,
+          pricePerKm: vc.pricePerKm, // updated from pricePerDay
           imageUrl: vc.imageUrl,
           fuelType: vc.fuelType,
           gearType: vc.gearType,
@@ -38,7 +37,11 @@ const VehicleCardComponent = ({ vc, vehicleId }) => {
 
   return (
     <div className="vehicle-card">
-      <img src={vc.imageUrl} alt={vc.type} className="vehicle-image" />
+      <img
+        src={`http://localhost:8000${vc.imageUrl}`}
+        alt={vc.type}
+        className="vehicle-image"
+      />
       <div className="vehicle-content">
         <h3 className="vehicle-title">{vc.name}</h3>
         <hr />
@@ -49,7 +52,7 @@ const VehicleCardComponent = ({ vc, vehicleId }) => {
         </div>
         <hr />
         <div className="vehicle-footer">
-          <p className="vehicle-price">Rs {vc.pricePerDay}/day</p>
+          <p className="vehicle-price">Rs {vc.pricePerKm}/km</p> {/* updated */}
           {role === "vendor" ? (
             <button
               onClick={handleDeleteClick}

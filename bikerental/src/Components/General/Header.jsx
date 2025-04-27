@@ -31,6 +31,7 @@ export default function Header() {
   const handleSignOut = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("token");
+    localStorage.removeItem("vendorId");
     setRole(null);
     navigate("/");
   };

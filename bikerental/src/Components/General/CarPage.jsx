@@ -38,20 +38,44 @@ export default function CarPage() {
         }
 
         const responseData = carsResponse.data;
-        const carsData = responseData.data || responseData.cars || responseData;
-        setCars(Array.isArray(carsData) ? carsData : []);
+        const carsDataRaw =
+          responseData.data || responseData.cars || responseData;
+        let carsData = Array.isArray(carsDataRaw) ? carsDataRaw : [];
 
-        const uniqueMakes = [...new Set(carsData.map((car) => car.make))];
-        const uniqueModels = [...new Set(carsData.map((car) => car.name))];
+        carsData = carsData.map((car) => ({
+          ...car,
+          make: car.make || "Unknown Make",
+          pricePerKm: Math.round(Number(car?.pricePerKm) || 0),
+        }));
 
-        const minPrice = Math.min(...carsData.map((car) => car.pricePerDay));
-        const maxPrice = Math.max(...carsData.map((car) => car.pricePerDay));
-        const priceRanges = generatePriceRanges(minPrice, maxPrice);
+        setCars(carsData);
+
+        const uniqueMakes = [
+          ...new Set(carsData.map((car) => car.make)),
+        ].filter(Boolean);
+        const uniqueModels = [
+          ...new Set(carsData.map((car) => car.name)),
+        ].filter(Boolean);
+
+        const priceList = carsData
+          .map((car) => Number(car?.pricePerKm))
+          .filter(
+            (price) =>
+              typeof price === "number" && !isNaN(price) && isFinite(price)
+          );
+
+        let priceRanges = ["Select Price"];
+        if (priceList.length > 0) {
+          const minPrice = Math.min(...priceList);
+          const maxPrice = Math.max(...priceList);
+          const generatedRanges = generatePriceRanges(minPrice, maxPrice);
+          priceRanges = ["Select Price", ...generatedRanges];
+        }
 
         setFilterOptions({
           makes: ["Select Make", ...uniqueMakes],
           models: ["Select Model", ...uniqueModels],
-          priceRanges: ["Select Price", ...priceRanges],
+          priceRanges: priceRanges,
         });
 
         setLoading(false);
@@ -66,10 +90,26 @@ export default function CarPage() {
   }, []);
 
   const generatePriceRanges = (min, max) => {
+    const MAX_RANGES = 10;
+    if (
+      isNaN(min) ||
+      isNaN(max) ||
+      !isFinite(min) ||
+      !isFinite(max) ||
+      min >= max
+    ) {
+      return [];
+    }
+
     const ranges = [];
-    const step = 500; // ₹500 intervals
-    for (let i = Math.floor(min / step) * step; i < max; i += step) {
-      ranges.push(`₹${i} - ₹${i + step}`);
+    const step = Math.max(5, Math.ceil((max - min) / MAX_RANGES));
+
+    for (
+      let i = Math.floor(min / step) * step;
+      i < max && ranges.length < MAX_RANGES;
+      i += step
+    ) {
+      ranges.push(`₹${i.toFixed(2)} - ₹${(i + step).toFixed(2)}`);
     }
     return ranges;
   };
@@ -158,18 +198,26 @@ function Vehicle({
   const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
 
   const filteredVehicles = safeVehicles.filter((vehicle) => {
-    if (!vehicle) return false;
+    if (!vehicle || vehicle.type !== "Car") return false;
 
-    const priceRange = selectedPrice.match(/\d+/g);
-    const minPrice = priceRange ? parseInt(priceRange[0]) : 0;
-    const maxPrice = priceRange ? parseInt(priceRange[1]) : Infinity;
+    let minPrice = 0;
+    let maxPrice = Infinity;
+
+    if (selectedPrice !== "Select Price") {
+      const priceRange = selectedPrice.match(/\d+\.?\d*/g);
+      if (priceRange && priceRange.length === 2) {
+        minPrice = parseFloat(priceRange[0]);
+        maxPrice = parseFloat(priceRange[1]);
+      }
+    }
+
+    const vehiclePrice = Number(vehicle?.pricePerKm) || 0;
 
     return (
-      vehicle.type === "Car" &&
       (selectedMake === "Select Make" || vehicle.make === selectedMake) &&
       (selectedModel === "Select Model" || vehicle.name === selectedModel) &&
-      (selectedPrice === "Select Price" ||
-        (vehicle.pricePerDay >= minPrice && vehicle.pricePerDay <= maxPrice))
+      vehiclePrice >= minPrice &&
+      vehiclePrice <= maxPrice
     );
   });
 
@@ -182,8 +230,10 @@ function Vehicle({
             vehicleId={vehicle._id || vehicle.id}
             vc={{
               ...vehicle,
-              imageUrl: vehicle.image || "/default-car.jpg",
+              imageUrl:
+                vehicle.image?.replace(/\\/g, "/") || "/default-car.jpg",
               make: vehicle.make || "Unknown Make",
+              pricePerKm: vehicle.pricePerKm,
             }}
           />
         ))

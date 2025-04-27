@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
-  const role = location.state?.role || "customer"; 
+  const role = location.state?.role || "customer";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,16 +21,21 @@ export default function SignUp() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/signup", {
+      const response = await fetch("http://localhost:8000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, role }),
       });
 
       const data = await response.json();
+      console.log(data);
       if (response.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userRole", data.role);
+        localStorage.setItem("vendorId", data.user.id);
         alert("Account created successfully!");
-        navigate("/signin");
+        if (role === "customer") navigate("/requser");
+        else if (role === "vendor") navigate("/reqven");
       } else {
         alert(data.message || "Error signing up");
       }

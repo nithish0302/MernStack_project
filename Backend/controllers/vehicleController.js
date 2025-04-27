@@ -2,19 +2,48 @@ const Vehicle = require("../models/vehicle");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
+// Helper function to validate and convert pricing
+const validateAndConvertPrice = (pricePerKm, pricePerDay) => {
+  if (pricePerKm !== undefined) {
+    const kmPrice = Number(pricePerKm);
+    if (isNaN(kmPrice) || kmPrice <= 0) {
+      throw new Error("Invalid pricePerKm value. Must be a positive number");
+    }
+    return kmPrice;
+  }
+
+  if (pricePerDay !== undefined) {
+    const dayPrice = Number(pricePerDay);
+    if (isNaN(dayPrice)) {
+      throw new Error("Invalid pricePerDay value. Must be a number");
+    }
+    return Math.round(dayPrice / 10); // Conversion from day to km price
+  }
+
+  throw new Error("Either pricePerKm or pricePerDay must be provided");
+};
+
 const addVehicle = async (req, res) => {
   try {
-    const { name, type, fuelType, gearType, seats, pricePerDay, vendor } =
-      req.body;
+    const {
+      name,
+      type,
+      fuelType,
+      gearType,
+      seats,
+      pricePerKm,
+      pricePerDay,
+      vendor,
+    } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
+    // Validate required fields
     const requiredFields = {
       name: "Name",
       type: "Type",
       fuelType: "Fuel Type",
       gearType: "Gear Type",
       seats: "Seats",
-      pricePerDay: "Price Per Day",
       vendor: "Vendor",
     };
 
@@ -30,6 +59,7 @@ const addVehicle = async (req, res) => {
       });
     }
 
+    // Validate vehicle type
     if (!["Car", "Bike"].includes(type)) {
       return res.status(400).json({
         success: false,
@@ -37,13 +67,19 @@ const addVehicle = async (req, res) => {
       });
     }
 
+    // Convert and validate price
+    const validatedPricePerKm = validateAndConvertPrice(
+      pricePerKm,
+      pricePerDay
+    );
+
     const newVehicle = new Vehicle({
       name,
       type,
       fuelType,
       gearType,
       seats: Number(seats),
-      pricePerDay: Number(pricePerDay),
+      pricePerKm: validatedPricePerKm,
       image,
       vendor,
       isAvailable: true,
@@ -61,78 +97,50 @@ const addVehicle = async (req, res) => {
     console.error("Error in addVehicle:", err);
     res.status(500).json({
       success: false,
-      message: "Failed to add vehicle",
+      message: err.message || "Failed to add vehicle",
       error: process.env.NODE_ENV === "development" ? err.message : undefined,
       suggestion: "Please check the data and try again",
     });
   }
 };
 
-const getCars = async (req, res) => {
+const getVehiclesByType = async (type, req, res) => {
   try {
-    const cars = await Vehicle.find({ type: "Car" }).populate("vendor");
+    const vehicles = await Vehicle.find({ type }).populate("vendor");
 
-    if (!cars || cars.length === 0) {
+    if (!vehicles || vehicles.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No cars found in inventory",
-        suggestion: "Add new cars to inventory",
+        message: `No ${type.toLowerCase()}s found in inventory`,
+        suggestion: `Add new ${type.toLowerCase()}s to inventory`,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Cars retrieved successfully",
-      count: cars.length,
-      data: cars,
+      message: `${type}s retrieved successfully`,
+      count: vehicles.length,
+      data: vehicles,
       timestamp: new Date().toISOString(),
     });
   } catch (err) {
-    console.error("Error fetching cars:", err);
+    console.error(`Error fetching ${type.toLowerCase()}s:`, err);
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve cars",
+      message: `Failed to retrieve ${type.toLowerCase()}s`,
       error: process.env.NODE_ENV === "development" ? err.message : undefined,
       retrySuggestion: "Please try again later",
     });
   }
 };
 
-const getBikes = async (req, res) => {
-  try {
-    const bikes = await Vehicle.find({ type: "Bike" }).populate("vendor");
-
-    if (!bikes || bikes.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No bikes found in inventory",
-        suggestion: "Add new bikes to inventory",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Bikes retrieved successfully",
-      count: bikes.length,
-      data: bikes,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (err) {
-    console.error("Error fetching bikes:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve bikes",
-      error: process.env.NODE_ENV === "development" ? err.message : undefined,
-      retrySuggestion: "Please try again later",
-    });
-  }
-};
+const getCars = async (req, res) => await getVehiclesByType("Car", req, res);
+const getBikes = async (req, res) => await getVehiclesByType("Bike", req, res);
 
 const getVendorVehicleCount = async (req, res) => {
   try {
     const { vendorId } = req.params;
 
-    // Validate vendorId format
     if (!ObjectId.isValid(vendorId)) {
       return res.status(400).json({
         success: false,
@@ -156,47 +164,8 @@ const getVendorVehicleCount = async (req, res) => {
     });
   }
 };
-const getCarsByVendor = async (req, res) => {
-  try {
-    const { vendorId } = req.params;
 
-    if (!ObjectId.isValid(vendorId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid vendor ID format",
-      });
-    }
-    // console.log("hi bro");
-    const cars = await Vehicle.find({
-      type: "Car",
-      vendor: new ObjectId(vendorId),
-    }).populate("vendor", "name email phone");
-
-    if (!cars || cars.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No cars found for this vendor",
-        suggestion: "Ensure the vendor has added cars",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Cars by vendor retrieved successfully",
-      count: cars.length,
-      data: cars,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (err) {
-    console.error("Error fetching vendor cars:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve cars by vendor",
-      error: process.env.NODE_ENV === "development" ? err.message : undefined,
-    });
-  }
-};
-const getBikesByVendor = async (req, res) => {
+const getVehiclesByVendorAndType = async (type, req, res) => {
   try {
     const { vendorId } = req.params;
 
@@ -207,35 +176,41 @@ const getBikesByVendor = async (req, res) => {
       });
     }
 
-    const bikes = await Vehicle.find({
-      type: "Bike",
+    const vehicles = await Vehicle.find({
+      type,
       vendor: new ObjectId(vendorId),
     }).populate("vendor", "name email phone");
 
-    if (!bikes || bikes.length === 0) {
+    if (!vehicles || vehicles.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No bikes found for this vendor",
-        suggestion: "Ensure the vendor has added bikes",
+        message: `No ${type.toLowerCase()}s found for this vendor`,
+        suggestion: `Ensure the vendor has added ${type.toLowerCase()}s`,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Bikes by vendor retrieved successfully",
-      count: bikes.length,
-      data: bikes,
+      message: `${type}s by vendor retrieved successfully`,
+      count: vehicles.length,
+      data: vehicles,
       timestamp: new Date().toISOString(),
     });
   } catch (err) {
-    console.error("Error fetching vendor bikes:", err);
+    console.error(`Error fetching vendor ${type.toLowerCase()}s:`, err);
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve bikes by vendor",
+      message: `Failed to retrieve ${type.toLowerCase()}s by vendor`,
       error: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 };
+
+const getCarsByVendor = async (req, res) =>
+  await getVehiclesByVendorAndType("Car", req, res);
+const getBikesByVendor = async (req, res) =>
+  await getVehiclesByVendorAndType("Bike", req, res);
+
 const deleteVehicle = async (req, res) => {
   try {
     const { vehicleId } = req.params;

@@ -1,30 +1,25 @@
 const Vendor = require("../Models/vendor");
 
+// GET vendor profile
 const getVendorProfile = async (req, res) => {
   try {
-    if (!req.session.vendorId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // Get vendor ID from the decoded JWT (via middleware)
+    const vendor = await Vendor.findById(req.user.id).select("-password");
 
-    const vendor = await Vendor.findById(req.session.vendorId).select(
-      "-password"
-    );
     if (!vendor) {
       return res.status(404).json({ message: "Vendor not found" });
     }
-    res.json(vendor);
+
+    res.status(200).json(vendor);
   } catch (err) {
     console.error("Error fetching vendor profile:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// UPDATE vendor profile
 const updateVendorProfile = async (req, res) => {
   try {
-    if (!req.session.vendorId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     const updates = {};
     const allowedFields = [
       "name",
@@ -46,13 +41,17 @@ const updateVendorProfile = async (req, res) => {
       }
     });
 
-    const vendor = await Vendor.findByIdAndUpdate(
-      req.session.vendorId,
-      updates,
-      { new: true, runValidators: true }
-    ).select("-password");
+    // Update vendor profile using ID from JWT
+    const vendor = await Vendor.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
 
-    res.json({
+    if (!vendor) {
+      return res.status(404).json({ message: "Vendor not found" });
+    }
+
+    res.status(200).json({
       message: "Profile updated successfully",
       data: vendor,
     });

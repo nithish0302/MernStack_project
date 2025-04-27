@@ -4,7 +4,11 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ["user", "vendor", "admin"], default: "user" },
+  role: {
+    type: String,
+    enum: ["customer", "vendor", "admin"],
+    default: "customer",
+  },
   phone: { type: String, default: "" },
   gender: { type: String, enum: ["male", "female", "other", ""], default: "" },
   address: { type: String, default: "" },
@@ -14,6 +18,7 @@ const userSchema = new mongoose.Schema({
   profileImage: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  drivinglincense:{type:String,default:""},
 });
 
 module.exports = mongoose.model("User", userSchema);

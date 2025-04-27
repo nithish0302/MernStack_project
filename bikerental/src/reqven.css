@@ -1,0 +1,83 @@
+.reqven-vendor-required-form-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: "Radio Canada", serif;
+}
+
+.reqven-vendor-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.reqven-form-header {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: "Radio Canada", serif;
+}
+
+.reqven-input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.reqven-input-group label {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 5px;
+  font-family: "Radio Canada", serif;
+}
+
+.reqven-input-group input,
+.reqven-input-group select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: "Radio Canada", serif;
+}
+
+.reqven-input-group input:disabled {
+  background-color: #f0f0f0;
+  color: #0b0b0b;
+  font-weight: 425;
+  font-size: 16.5px;
+}
+
+.reqven-submit-button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: "Radio Canada", serif;
+}
+
+.reqven-submit-button:disabled {
+  background-color: #d6d6d6;
+  cursor: not-allowed;
+}
+
+.reqven-submit-button:hover:enabled {
+  background-color: #0056b3;
+}
+
+.reqven-error-message {
+  color: red;
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 10px;
+  font-family: "Radio Canada", serif;
+}

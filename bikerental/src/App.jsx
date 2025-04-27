@@ -17,6 +17,8 @@ import MyBookingsPage from "./Components/Customer/MyBookingsPage";
 import CustomerProfile from "./Components/Customer/CustomerProfile";
 import VendorProfile from "./Components/Vendor/VendorProfile";
 import VendorRequestsPage from "./Components/Vendor/VendorRequestsPage";
+import VendorRequiredFields from "./Components/Vendor/VendorRequiredFields";
+import UserRequiredFields from "./Components/Customer/UserRequiredFields";
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
         <Route path="/vendor-requests" element={<VendorRequestsPage />} />
         <Route path="/my-profile" element={<CustomerProfile />} />
         <Route path="/myvenprofile" element={<VendorProfile />} />
+        <Route path="/reqven" element={<VendorRequiredFields />} />
+        <Route path="/requser" element={<UserRequiredFields />} />
       </Routes>
     </BrowserRouter>
   );

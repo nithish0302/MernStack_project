@@ -6,7 +6,11 @@ const vehicleSchema = new mongoose.Schema({
   fuelType: { type: String, required: true },
   gearType: { type: String, required: true },
   seats: { type: Number, required: true },
-  pricePerDay: { type: Number, required: true },
+  pricePerKm: {
+    type: Number,
+    required: true,
+    min: 1, 
+  },
   image: { type: String, required: false },
   vendor: {
     type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +21,7 @@ const vehicleSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  make: { type: String, required: false }, 
+  make: { type: String, required: false },
 });
 
 const Vehicle =

@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../General/Header";
-import "../../VendorProfilePage.css";
+import "../../UserProfilePage.css";
 
 export default function VendorProfile() {
   const [vendor, setVendor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false); // Initially false, will be true when user clicks "Edit Profile"
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,14 +23,24 @@ export default function VendorProfile() {
     panNumber: "",
     bankAccountNumber: "",
   });
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVendorProfile = async () => {
       try {
-        const response = await axios.get("/api/vendors/profile", {
-          withCredentials: true,
-        });
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/signin");
+          return;
+        }
+
+        const response = await axios.get(
+          "http://localhost:8000/api/vendors/profile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         setVendor(response.data);
         setFormData({
@@ -55,7 +65,7 @@ export default function VendorProfile() {
     };
 
     fetchVendorProfile();
-  }, []);
+  }, [editMode === false]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,141 +75,105 @@ export default function VendorProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.patch("/api/vendors/profile", formData, {
-        withCredentials: true,
+      const token = localStorage.getItem("token");
+      const response = await axios.patch(
+        "http://localhost:8000/api/vendors/profile",
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Update the vendor state with the updated profile data
+      setVendor(response.data);
+
+      // Update the formData state with the updated data from the response
+      setFormData({
+        name: response.data.name || "",
+        email: response.data.email || "",
+        phone: response.data.phone || "",
+        gender: response.data.gender || "",
+        address: response.data.address || "",
+        city: response.data.city || "",
+        state: response.data.state || "",
+        pincode: response.data.pincode || "",
+        companyName: response.data.companyName || "",
+        aadharNumber: response.data.aadharNumber || "",
+        panNumber: response.data.panNumber || "",
+        bankAccountNumber: response.data.bankAccountNumber || "",
       });
 
-      setVendor(response.data.data);
-      setEditMode(false);
+      setEditMode(false); // Switch back to the view mode
+      alert("Profile updated successfully!");
     } catch (err) {
-      console.error("Error updating profile:", err);
+      alert(err.response?.data?.message || "Failed to update profile");
     }
   };
 
-  if (loading) return <div className="vendor-loading">Loading profile...</div>;
-  if (error) return <div className="vendor-error">{error}</div>;
+  const handleCancel = () => {
+    if (vendor) {
+      setFormData({
+        name: vendor.name || "",
+        email: vendor.email || "",
+        phone: vendor.phone || "",
+        gender: vendor.gender || "",
+        address: vendor.address || "",
+        city: vendor.city || "",
+        state: vendor.state || "",
+        pincode: vendor.pincode || "",
+        companyName: vendor.companyName || "",
+        aadharNumber: vendor.aadharNumber || "",
+        panNumber: vendor.panNumber || "",
+        bankAccountNumber: vendor.bankAccountNumber || "",
+      });
+    }
+    setEditMode(false); // Exit edit mode
+  };
+
+  if (loading) return <div className="loading">Loading profile...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <>
       <Header />
-      <div className="vendor-profile-container">
-        <h1 className="vendor-profile-title">Vendor Profile</h1>
+      <div className="user-profile-container">
+        <h1 className="user-profile-title">Vendor Profile</h1>
 
-        {!editMode ? (
-          <div className="vendor-profile-view">
-            <div className="vendor-profile-header">
-              <h2>{vendor?.name}</h2>
-              <span className="vendor-role-badge">VENDOR</span>
-              {vendor?.companyName && (
-                <div className="vendor-company-name">{vendor.companyName}</div>
-              )}
-            </div>
-
-            <div className="vendor-profile-details">
-              <div className="vendor-detail-row">
-                <span>Email:</span>
-                <span>{vendor?.email}</span>
-              </div>
-              {vendor?.phone && (
-                <div className="vendor-detail-row">
-                  <span>Phone:</span>
-                  <span>{vendor?.phone}</span>
-                </div>
-              )}
-              {vendor?.gender && (
-                <div className="vendor-detail-row">
-                  <span>Gender:</span>
-                  <span>{vendor?.gender}</span>
-                </div>
-              )}
-              {vendor?.aadharNumber && (
-                <div className="vendor-detail-row">
-                  <span>Aadhar Number:</span>
-                  <span>{vendor?.aadharNumber}</span>
-                </div>
-              )}
-              {vendor?.panNumber && (
-                <div className="vendor-detail-row">
-                  <span>PAN Number:</span>
-                  <span>{vendor?.panNumber}</span>
-                </div>
-              )}
-              {vendor?.bankAccountNumber && (
-                <div className="vendor-detail-row">
-                  <span>Bank Account:</span>
-                  <span>{vendor?.bankAccountNumber}</span>
-                </div>
-              )}
-              {vendor?.address && (
-                <div className="vendor-detail-row">
-                  <span>Address:</span>
-                  <span>{vendor?.address}</span>
-                </div>
-              )}
-              {(vendor?.city || vendor?.state || vendor?.pincode) && (
-                <div className="vendor-detail-row">
-                  <span>Location:</span>
-                  <span>
-                    {[vendor?.city, vendor?.state, vendor?.pincode]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <button
-              className="vendor-edit-btn"
-              onClick={() => setEditMode(true)}
-            >
-              Edit Profile
-            </button>
-          </div>
-        ) : (
-          <form className="vendor-profile-form" onSubmit={handleSubmit}>
-            <div className="vendor-form-group">
-              <label>Name</label>
+        {editMode ? (
+          <form className="user-profile-form" onSubmit={handleSubmit}>
+            <div className="user-form-group">
+              <label>Name *</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
+                required
               />
             </div>
 
-            <div className="vendor-form-group">
-              <label>Company Name</label>
-              <input
-                type="text"
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="vendor-form-group">
-              <label>Email</label>
+            <div className="user-form-group">
+              <label>Email *</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 disabled
-                className="vendor-disabled-input"
+                className="user-disabled-input"
               />
             </div>
 
-            <div className="vendor-form-group">
+            <div className="user-form-group">
               <label>Phone</label>
               <input
                 type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                placeholder="+91 1234567890"
               />
             </div>
 
-            <div className="vendor-form-group">
+            <div className="user-form-group">
               <label>Gender</label>
               <select
                 name="gender"
@@ -213,52 +187,18 @@ export default function VendorProfile() {
               </select>
             </div>
 
-            <div className="vendor-form-group">
-              <label>Aadhar Number</label>
-              <input
-                type="text"
-                name="aadharNumber"
-                value={formData.aadharNumber}
-                onChange={handleInputChange}
-                placeholder="XXXX XXXX XXXX"
-              />
-            </div>
-
-            <div className="vendor-form-group">
-              <label>PAN Number</label>
-              <input
-                type="text"
-                name="panNumber"
-                value={formData.panNumber}
-                onChange={handleInputChange}
-                placeholder="ABCDE1234F"
-              />
-            </div>
-
-            <div className="vendor-form-group">
-              <label>Bank Account Number</label>
-              <input
-                type="text"
-                name="bankAccountNumber"
-                value={formData.bankAccountNumber}
-                onChange={handleInputChange}
-                placeholder="XXXXXXXXXX"
-              />
-            </div>
-
-            <div className="vendor-form-group">
+            <div className="user-form-group">
               <label>Address</label>
               <input
                 type="text"
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
-                placeholder="Street address"
               />
             </div>
 
-            <div className="vendor-form-row">
-              <div className="vendor-form-group">
+            <div className="user-form-row">
+              <div className="user-form-group">
                 <label>City</label>
                 <input
                   type="text"
@@ -268,7 +208,7 @@ export default function VendorProfile() {
                 />
               </div>
 
-              <div className="vendor-form-group">
+              <div className="user-form-group">
                 <label>State</label>
                 <input
                   type="text"
@@ -278,7 +218,7 @@ export default function VendorProfile() {
                 />
               </div>
 
-              <div className="vendor-form-group">
+              <div className="user-form-group">
                 <label>Pincode</label>
                 <input
                   type="text"
@@ -289,19 +229,117 @@ export default function VendorProfile() {
               </div>
             </div>
 
-            <div className="vendor-form-actions">
+            <div className="user-form-group">
+              <label>Company Name</label>
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="user-form-group">
+              <label>Aadhar Number</label>
+              <input
+                type="text"
+                name="aadharNumber"
+                value={formData.aadharNumber}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="user-form-group">
+              <label>PAN Number</label>
+              <input
+                type="text"
+                name="panNumber"
+                value={formData.panNumber}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="user-form-group">
+              <label>Bank Account Number</label>
+              <input
+                type="text"
+                name="bankAccountNumber"
+                value={formData.bankAccountNumber}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="user-form-actions">
               <button
                 type="button"
-                className="vendor-cancel-btn"
-                onClick={() => setEditMode(false)}
+                className="user-cancel-btn"
+                onClick={handleCancel}
               >
                 Cancel
               </button>
-              <button type="submit" className="vendor-save-btn">
+              <button type="submit" className="user-save-btn">
                 Save Changes
               </button>
             </div>
           </form>
+        ) : (
+          <div className="user-profile-view">
+            <div className="user-profile-header">
+              <h2>{vendor?.name}</h2>
+              <span className="user-role-badge">Vendor</span>
+            </div>
+
+            <div className="user-profile-details">
+              <div className="user-detail-row">
+                <span>Email:</span>
+                <span>{vendor?.email}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>Phone:</span>
+                <span>{vendor?.phone || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>Gender:</span>
+                <span>{vendor?.gender || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>Address:</span>
+                <span>{vendor?.address || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>City:</span>
+                <span>{vendor?.city || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>State:</span>
+                <span>{vendor?.state || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>Pincode:</span>
+                <span>{vendor?.pincode || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>Company:</span>
+                <span>{vendor?.companyName || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>Aadhar No:</span>
+                <span>{vendor?.aadharNumber || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>PAN No:</span>
+                <span>{vendor?.panNumber || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>Bank Account:</span>
+                <span>{vendor?.bankAccountNumber || "-"}</span>
+              </div>
+            </div>
+
+            <button className="user-edit-btn" onClick={() => setEditMode(true)}>
+              Edit Profile
+            </button>
+          </div>
         )}
       </div>
     </>
