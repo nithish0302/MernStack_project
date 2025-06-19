@@ -10,7 +10,21 @@ const VehicleCardComponent = ({ vc, vehicleId }) => {
   const handleBookClick = () => {
     navigate("/Order", {
       state: {
-        vehicleData: vc,
+        vehicleData: {
+          id: vehicleId,
+          name: vc.name,
+          type: vc.type,
+          pricePerKm: vc.pricePerKm, // updated from pricePerDay
+          imageUrl: vc.imageUrl,
+          fuelType: vc.fuelType,
+          gearType: vc.gearType,
+          seats: vc.seats,
+          vechileNumber: vc.vehicleNumber,
+          vendorname: vc.vendor.name,
+          vendorphone: vc.vendor.phone,
+          companyname: vc.vendor.companyName,
+          vendoraddress: vc.vendor.address,
+        },
       },
     });
   };
@@ -52,9 +66,11 @@ const VehicleCardComponent = ({ vc, vehicleId }) => {
               Delete Vehicle
             </button>
           ) : (
-            <button onClick={handleBookClick} className="vehicle-button">
-              Book Vehicle <CgArrowTopRight />
-            </button>
+            <>
+              <button onClick={handleBookClick} className="vehicle-button">
+                Book Vehicle <CgArrowTopRight />
+              </button>
+            </>
           )}
         </div>
       </div>

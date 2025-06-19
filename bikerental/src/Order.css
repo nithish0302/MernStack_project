@@ -2,7 +2,7 @@ Order.css .order-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
-  font-family: "Arial", sans-serif;
+  font-family: "Quicksand", sans-serif;
   color: #333;
 }
 
@@ -331,4 +331,23 @@ Order.css .order-container {
   color: #856404;
   border-radius: 4px;
   margin-bottom: 20px;
+}
+
+.order-header,
+.vehicle-info,
+.vehicle-details-card,
+.no-vehicle-warning,
+.form-section,
+.order-form,
+.form-summary,
+.payment-summary,
+.vehicle-summary {
+  font-family: "Radio Canada", sans-serif;
+}
+.order-form input,
+.order-form select,
+.order-form label,
+.order-form button,
+.order-form textarea {
+  font-family: "Radio Canada", sans-serif;
 }
