@@ -10,8 +10,9 @@ function AddCar() {
     fuelType: "Petrol",
     gearType: "Manual",
     seats: "",
-    pricePerDay: "",
+    pricePerKm: "",
     image: null,
+    vehicleNumber: "",
     isAvailable: true,
   });
 
@@ -47,11 +48,18 @@ function AddCar() {
       return;
     }
 
+    const tnRegex = /^TN\s?\d{2}\s+[A-Z]{1,2}\s+\d{4}$/i;
+    if (!tnRegex.test(car.vehicleNumber)) {
+      alert("Invalid TN vehicle number format (e.g. TN 22 AB 1234)");
+      return;
+    }
+
     const vendorId = localStorage.getItem("vendorId");
     if (!vendorId) {
       alert("Vendor ID not found. Please log in again.");
       return;
     }
+
     if (!car.image) {
       alert("Please upload a car image.");
       return;
@@ -63,7 +71,8 @@ function AddCar() {
     formData.append("fuelType", car.fuelType);
     formData.append("gearType", car.gearType);
     formData.append("seats", car.seats);
-    formData.append("pricePerDay", car.pricePerDay);
+    formData.append("pricePerKm", car.pricePerKm);
+    formData.append("vehicleNumber", car.vehicleNumber);
     formData.append("image", car.image);
     formData.append("vendor", vendorId);
     formData.append("isAvailable", car.isAvailable);
@@ -82,8 +91,10 @@ function AddCar() {
           fuelType: "Petrol",
           gearType: "Manual",
           seats: "",
-          pricePerDay: "",
+          pricePerKm: "",
           image: null,
+          vehicleNumber: "",
+          isAvailable: true,
         });
       } else {
         const errorData = await response.json();
@@ -102,7 +113,6 @@ function AddCar() {
         <div className="AddBikeContainer">
           <h4 className="AddBikeTitle">Add New Car</h4>
           <form onSubmit={handleSubmit} className="BikeForm">
-            {/* Car Name */}
             <div className="BikeField">
               <label className="BikeLabel">Car Name:</label>
               <input
@@ -111,6 +121,19 @@ function AddCar() {
                 value={car.name}
                 onChange={handleChange}
                 className="BikeInput"
+                required
+              />
+            </div>
+
+            <div className="BikeField">
+              <label className="BikeLabel">Vehicle Number:</label>
+              <input
+                type="text"
+                name="vehicleNumber"
+                value={car.vehicleNumber}
+                onChange={handleChange}
+                className="BikeInput"
+                placeholder="e.g., TN 22 AB 1234"
                 required
               />
             </div>
@@ -157,11 +180,11 @@ function AddCar() {
             </div>
 
             <div className="BikeField">
-              <label className="BikeLabel">Price Per Day (₹):</label>
+              <label className="BikeLabel">Price Per Km (₹):</label>
               <input
                 type="number"
-                name="pricePerDay"
-                value={car.pricePerDay}
+                name="pricePerKm"
+                value={car.pricePerKm}
                 onChange={handleChange}
                 className="BikeInput"
                 min="1"

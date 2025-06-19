@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../General/Header";
 import "../../Order.css";
@@ -18,24 +18,21 @@ const Order = () => {
 function OrderComponent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [vehicleData, setVehicleData] = useState(
-    location.state?.vehicleData || null
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const vehicleData = location.state?.vehicleData || null;
+  console.log("vehicleData", vehicleData);
+
   const [formData, setFormData] = useState({
     name: "",
-    days: "1",
     phone: "",
     pickupDate: "",
     dropDate: "",
     email: "",
     city: "",
-    vehicleName: vehicleData?.name || "",
-    vehicleType: vehicleData?.type || "",
-    pricePerKm: vehicleData?.pricePerKm || "",
-    totalPrice: vehicleData?.pricePerKm || "",
+    distanceKm: "",
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,17 +72,17 @@ function OrderComponent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setIsSubmitting(true);
-    setError(null);
 
     try {
+      const totalAmount = vehicleData.pricePerKm * (formData.distanceKm || 1);
+
       const bookingData = {
         userId: localStorage.getItem("vendorId") || "guest-user",
-        vehicleId: vehicleData.id,
+        vehicleId: vehicleData._id, // ✅ Use correct _id from backend
         startDate: formData.pickupDate,
         endDate: formData.dropDate,
-        totalAmount: formData.totalPrice,
+        totalAmount,
         bookedName: formData.name,
         bookedEmail: formData.email,
         bookedPhone: formData.phone,
@@ -95,11 +92,7 @@ function OrderComponent() {
       const response = await axios.post(
         "http://localhost:8000/api/bookings/create",
         bookingData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       if (response.data.success) {
@@ -126,7 +119,7 @@ function OrderComponent() {
         <div className="vehicle-display-section">
           <div className="vehicle-details-card">
             <img
-              src={`http://localhost:8000${vehicleData.imageUrl}`}
+              src={`http://localhost:8000${vehicleData.image}`}
               alt={vehicleData.name}
             />
             <div className="vehicle-info">
@@ -210,13 +203,19 @@ function OrderComponent() {
                 name="dropDate"
                 value={formData.dropDate}
                 onChange={handleChange}
-                min={
-                  formData.pickupDate || new Date().toISOString().split("T")[0]
-                }
+                min={formData.pickupDate}
                 required
               />
             </div>
           </div>
+          <input
+            type="number"
+            name="distanceKm"
+            placeholder="Estimated Distance (km)"
+            value={formData.distanceKm}
+            onChange={handleChange}
+            min="1"
+          />
           <select
             name="city"
             value={formData.city}
@@ -224,16 +223,38 @@ function OrderComponent() {
             required
           >
             <option value="">Select City *</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Delhi">Delhi</option>
-            <option value="Bangalore">Bangalore</option>
-            <option value="Hyderabad">Hyderabad</option>
             <option value="Chennai">Chennai</option>
+            <option value="Coimbatore">Coimbatore</option>
+            <option value="Madurai">Madurai</option>
+            <option value="Tiruchirappalli">Tiruchirappalli</option>
+            <option value="Salem">Salem</option>
           </select>
         </div>
 
+        <div className="form-section">
+          <h3>Vehicle & Vendor Info</h3>
+          <p>
+            <strong>Vehicle Number:</strong>{" "}
+            {vehicleData?.vehicleNumber || "N/A"}
+          </p>
+          <p>
+            <strong>Vendor Name:</strong> {vehicleData?.vendor?.name || "N/A"}
+          </p>
+          <p>
+            <strong>Company Name:</strong>{" "}
+            {vehicleData?.vendor?.companyName || "N/A"}
+          </p>
+          <p>
+            <strong>Vendor Address:</strong>{" "}
+            {vehicleData?.vendor?.address || "N/A"}
+          </p>
+        </div>
+
         <div className="form-summary">
-          <h4> Price: ₹{formData.totalPrice}/km</h4>
+          <h4>
+            Total Estimated Price: ₹
+            {vehicleData.pricePerKm * (formData.distanceKm || 1)} /-
+          </h4>
         </div>
 
         <button type="submit" className="submit-btn" disabled={isSubmitting}>

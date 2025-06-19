@@ -9,7 +9,7 @@ const vehicleSchema = new mongoose.Schema({
   pricePerKm: {
     type: Number,
     required: true,
-    min: 1, 
+    min: 1,
   },
   image: { type: String, required: false },
   vendor: {
@@ -22,6 +22,14 @@ const vehicleSchema = new mongoose.Schema({
     default: true,
   },
   make: { type: String, required: false },
+
+  vehicleNumber: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    match: /^TN\s+\d{2}\s+[A-Z]{1,2}\s+\d{4}$/i,
+  },
 });
 
 const Vehicle =

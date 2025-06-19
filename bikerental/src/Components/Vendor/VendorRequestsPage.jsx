@@ -19,14 +19,14 @@ export default function VendorRequestsPage() {
           return;
         }
 
-        console.log("Fetching requests for vendor:", vendorId); 
+        console.log("Fetching requests for vendor:", vendorId);
 
         const response = await axios.get(
           `http://localhost:8000/api/bookings/vendor/${vendorId}/requests`
         );
 
-        console.log("Full API response:", response); 
-        console.log("Response data:", response.data); 
+        console.log("Full API response:", response);
+        console.log("Response data:", response.data);
 
         setRequests(response.data.data || []);
         setLoading(false);
@@ -42,13 +42,13 @@ export default function VendorRequestsPage() {
   const handleStatusUpdate = async (bookingId, status) => {
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/bookings/${bookingId}/status`,
+        `http://localhost:8000/api/bookings/vendor/${bookingId}/status`,
         { status }
       );
 
       setRequests(
         requests.map((request) =>
-          request._id === bookingId ? response.data : request
+          request._id === bookingId ? response.data.data : request
         )
       );
 
@@ -102,7 +102,7 @@ export default function VendorRequestsPage() {
                   </div>
                   <div className="detail-row">
                     <span>Amount:</span>
-                    <span>₹{request.totalAmount}</span>
+                    <span>₹{request.totalAmount}/km</span>
                   </div>
                 </div>
 

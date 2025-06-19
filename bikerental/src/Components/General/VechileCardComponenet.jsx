@@ -10,16 +10,7 @@ const VehicleCardComponent = ({ vc, vehicleId }) => {
   const handleBookClick = () => {
     navigate("/Order", {
       state: {
-        vehicleData: {
-          id: vehicleId,
-          name: vc.name,
-          type: vc.type,
-          pricePerKm: vc.pricePerKm, // updated from pricePerDay
-          imageUrl: vc.imageUrl,
-          fuelType: vc.fuelType,
-          gearType: vc.gearType,
-          seats: vc.seats,
-        },
+        vehicleData: vc,
       },
     });
   };

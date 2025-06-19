@@ -118,11 +118,15 @@ export default function Header() {
                 <button
                   className="dropdown-item"
                   onClick={() => {
-                    navigate("/my-bookings");
+                    if (role === "vendor") {
+                      navigate("/previousbooking");
+                    } else {
+                      navigate("/my-bookings");
+                    }
                     setShowDropdown(false);
                   }}
                 >
-                  My Bookings
+                  {role === "vendor" ? "Previous Bookings" : "My Bookings"}
                 </button>
                 <button
                   className="dropdown-item"

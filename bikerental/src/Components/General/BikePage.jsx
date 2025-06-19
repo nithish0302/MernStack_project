@@ -185,7 +185,11 @@ function Vehicle({
               ...vehicle,
               imageUrl: vehicle.image || "/default-bike.jpg",
               make: vehicle.make || "Unknown Make",
-              pricePerKm: vehicle.pricePerKm, // Make sure to use pricePerKm
+              pricePerKm: vehicle.pricePerKm,
+              vehicleNumber: vehicle.vehicleNumber || "N/A",
+              vendorName: vehicle.vendor?.name || "N/A",
+              vendorCompany: vehicle.vendor?.companyName || "N/A",
+              vendorAddress: vehicle.vendor?.address || "N/A",
             }}
           />
         ))

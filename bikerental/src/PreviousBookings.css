@@ -1,0 +1,115 @@
+/* PreviousBookings.css */
+
+.previous-bookings-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.previous-bookings-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.back-button {
+  margin-bottom: 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+.bookings-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.booking-item {
+  background-color: #fff;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  border-left: 5px solid #007bff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.booking-item strong {
+  color: #007bff;
+}
+
+.loading,
+.error,
+.no-bookings {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  color: #555;
+}
+
+.error {
+  color: #d9534f;
+}
+
+.action-button {
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+
+  display: block;
+  width: fit-content;
+  margin: 10px auto 0 280px;
+}
+
+.action-button.view-request-button {
+  background-color: #28a745;
+}
+
+.action-button.view-request-button:hover {
+  background-color: #218838;
+}
+
+.action-button.complete-ride-button {
+  background-color: #6f42c1;
+}
+
+.action-button.complete-ride-button:hover {
+  background-color: #5936a1;
+}
+
+.ride-completed-label {
+  display: block;
+  margin: 10px 310px 0 280px;
+  padding: 6px 12px;
+  background-color: #17a2b8;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.ride-cancelled-label {
+  display: block;
+  margin: 10px 300px 0 310px;
+  padding: 6px 12px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: bold;
+  padding: 10px;
+}

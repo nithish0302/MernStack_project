@@ -11,7 +11,11 @@ router.patch(
   "/vendor/:bookingId/status",
   bookingController.updateBookingStatus
 );
-
-
+router.get(
+  "/vendor/previous/:vendorId",
+  bookingController.getVendorPreviousBookings
+);
+router.get("/vendor/:vendorId/all", bookingController.getAllVendorBookings);
+router.put("/:bookingId/complete", bookingController.completeRide);
 
 module.exports = router;

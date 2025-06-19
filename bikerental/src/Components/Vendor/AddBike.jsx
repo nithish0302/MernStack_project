@@ -10,14 +10,16 @@ function AddBike() {
     fuelType: "Petrol",
     gearType: "Manual",
     seats: "",
-    pricePerDay: "",
+    pricePerKm: "",
     image: null,
+    vehicleNumber: "",
   });
 
   const [errors, setErrors] = useState({
     seats: "",
-    pricePerDay: "",
+    pricePerKm: "",
     image: "",
+    vehicleNumber: "",
   });
 
   const handleChange = (e) => {
@@ -32,17 +34,17 @@ function AddBike() {
       setErrors({ ...errors, seats: "" });
     }
 
-    if (name === "pricePerDay") {
+    if (name === "pricePerKm") {
       const priceValue = parseFloat(value);
       if (isNaN(priceValue)) {
-        setErrors({ ...errors, pricePerDay: "Please enter a valid number" });
+        setErrors({ ...errors, pricePerKm: "Please enter a valid number" });
         return;
       }
       if (priceValue <= 0) {
-        setErrors({ ...errors, pricePerDay: "Price must be greater than 0" });
+        setErrors({ ...errors, pricePerKm: "Price must be greater than 0" });
         return;
       }
-      setErrors({ ...errors, pricePerDay: "" });
+      setErrors({ ...errors, pricePerKm: "" });
     }
 
     setBike({ ...bike, [name]: value });
@@ -73,13 +75,22 @@ function AddBike() {
       return;
     }
 
-    const priceValue = parseFloat(bike.pricePerDay);
+    const priceValue = parseFloat(bike.pricePerKm);
     if (isNaN(priceValue)) {
-      setErrors({ ...errors, pricePerDay: "Please enter a valid number" });
+      setErrors({ ...errors, pricePerKm: "Please enter a valid number" });
       return;
     }
     if (priceValue <= 0) {
-      setErrors({ ...errors, pricePerDay: "Price must be greater than 0" });
+      setErrors({ ...errors, pricePerKm: "Price must be greater than 0" });
+      return;
+    }
+
+    const tnRegex = /^TN\s?\d{2}\s+[A-Z]{1,2}\s+\d{4}$/i;
+    if (!tnRegex.test(bike.vehicleNumber)) {
+      setErrors({
+        ...errors,
+        vehicleNumber: "Invalid TN vehicle number format",
+      });
       return;
     }
 
@@ -100,9 +111,10 @@ function AddBike() {
     formData.append("fuelType", bike.fuelType);
     formData.append("gearType", bike.gearType);
     formData.append("seats", bike.seats);
-    formData.append("pricePerDay", bike.pricePerDay);
+    formData.append("pricePerKm", bike.pricePerKm);
     formData.append("image", bike.image);
     formData.append("vendor", vendorId);
+    formData.append("vehicleNumber", bike.vehicleNumber);
 
     try {
       const response = await fetch("http://localhost:8000/api/vech/bikes", {
@@ -119,13 +131,15 @@ function AddBike() {
           fuelType: "Petrol",
           gearType: "Manual",
           seats: "",
-          pricePerDay: "",
+          pricePerKm: "",
           image: null,
+          vehicleNumber: "",
         });
         setErrors({
           seats: "",
-          pricePerDay: "",
+          pricePerKm: "",
           image: "",
+          vehicleNumber: "",
         });
       } else {
         const errorData = await response.json();
@@ -154,6 +168,22 @@ function AddBike() {
                 className="BikeInput"
                 required
               />
+            </div>
+
+            <div className="BikeField">
+              <label className="BikeLabel">Vehicle Number:</label>
+              <input
+                type="text"
+                name="vehicleNumber"
+                value={bike.vehicleNumber}
+                onChange={handleChange}
+                className="BikeInput"
+                placeholder="e.g., TN 22 AB 1234"
+                required
+              />
+              {errors.vehicleNumber && (
+                <span className="error-message">{errors.vehicleNumber}</span>
+              )}
             </div>
 
             <div className="BikeField">
@@ -200,19 +230,19 @@ function AddBike() {
             </div>
 
             <div className="BikeField">
-              <label className="BikeLabel">Price Per Day (₹):</label>
+              <label className="BikeLabel">Price Per Km (₹):</label>
               <input
                 type="number"
-                name="pricePerDay"
-                value={bike.pricePerDay}
+                name="pricePerKm"
+                value={bike.pricePerKm}
                 onChange={handleChange}
                 className="BikeInput"
                 min="1"
                 step="0.01"
                 required
               />
-              {errors.pricePerDay && (
-                <span className="error-message">{errors.pricePerDay}</span>
+              {errors.pricePerKm && (
+                <span className="error-message">{errors.pricePerKm}</span>
               )}
             </div>
 

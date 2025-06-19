@@ -1,8 +1,9 @@
 const Booking = require("../models/booking");
-const Vehicle = require("../models/vehicle");
+const Vehicle = require("../Models/vehicle");
 const Vendor = require("../models/vendor");
 const User = require("../models/user");
 
+// 1. Create Booking
 exports.createBooking = async (req, res) => {
   try {
     const {
@@ -17,7 +18,6 @@ exports.createBooking = async (req, res) => {
       bookedCity,
     } = req.body;
 
-    // Validate required fields
     const requiredFields = [
       "userId",
       "vehicleId",
@@ -38,15 +38,12 @@ exports.createBooking = async (req, res) => {
       });
     }
 
-    // Verify vehicle exists and is available
     const vehicle = await Vehicle.findById(vehicleId).populate("vendor");
     if (!vehicle) {
-      return res.status(404).json({
-        success: false,
-        message: "Vehicle not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Vehicle not found" });
     }
-
     if (!vehicle.isAvailable) {
       return res.status(400).json({
         success: false,
@@ -54,16 +51,13 @@ exports.createBooking = async (req, res) => {
       });
     }
 
-    // Verify user exists
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    // Create new booking with statusOfVendor
     const booking = new Booking({
       userId,
       userName: user.name || bookedName,
@@ -81,13 +75,10 @@ exports.createBooking = async (req, res) => {
       bookedPhone,
       bookedCity,
       status: "ongoing",
-      statusOfVendor: "pending", // New field added here
+      statusOfVendor: "pending",
     });
 
-    // Save the booking
     await booking.save();
-
-    // Update vehicle availability to false
     vehicle.isAvailable = false;
     await vehicle.save();
 
@@ -106,18 +97,14 @@ exports.createBooking = async (req, res) => {
   }
 };
 
-// Get all bookings for a specific user
 exports.getUserBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ userId: req.params.userId }).sort({
       createdAt: -1,
     });
-
-    res.status(200).json({
-      success: true,
-      count: bookings.length,
-      data: bookings,
-    });
+    res
+      .status(200)
+      .json({ success: true, count: bookings.length, data: bookings });
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -127,24 +114,40 @@ exports.getUserBookings = async (req, res) => {
   }
 };
 
+exports.getAllVendorBookings = async (req, res) => {
+  try {
+    const vendorId = req.params.vendorId;
+    const allBookings = await Booking.find({ vendorId })
+      .sort({ createdAt: -1 })
+      .populate("userId", "name email phone")
+      .populate("vehicleId", "name imageUrl");
+
+    res
+      .status(200)
+      .json({ success: true, count: allBookings.length, data: allBookings });
+  } catch (err) {
+    console.error("Error in getAllVendorBookings:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch all vendor bookings",
+      error: err.message,
+    });
+  }
+};
 
 exports.getVendorRequests = async (req, res) => {
   try {
     const bookings = await Booking.find({
       vendorId: req.params.vendorId,
-      statusOfVendor: "pending", 
+      statusOfVendor: "pending",
     })
       .sort({ createdAt: -1 })
       .populate("userId", "name email phone")
       .populate("vehicleId", "name imageUrl");
 
-  
-
-    res.status(200).json({
-      success: true,
-      count: bookings.length,
-      data: bookings,
-    });
+    res
+      .status(200)
+      .json({ success: true, count: bookings.length, data: bookings });
   } catch (err) {
     console.error("Error in getVendorRequests:", err);
     res.status(500).json({
@@ -154,6 +157,8 @@ exports.getVendorRequests = async (req, res) => {
     });
   }
 };
+
+// 5. Update Booking Status (accept/cancel)
 exports.updateBookingStatus = async (req, res) => {
   try {
     const { bookingId } = req.params;
@@ -173,18 +178,13 @@ exports.updateBookingStatus = async (req, res) => {
     );
 
     if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
     }
 
     if (status === "cancelled") {
-      await Vehicle.findByIdAndUpdate(
-        booking.vehicleId,
-        { isAvailable: true },
-        { new: true }
-      );
+      await Vehicle.findByIdAndUpdate(booking.vehicleId, { isAvailable: true });
     }
 
     res.status(200).json({
@@ -201,6 +201,7 @@ exports.updateBookingStatus = async (req, res) => {
   }
 };
 
+// 6. Cancel Booking
 exports.cancelBooking = async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
@@ -215,17 +216,14 @@ exports.cancelBooking = async (req, res) => {
     ).populate("vehicleId");
 
     if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
     }
 
-    await Vehicle.findByIdAndUpdate(
-      booking.vehicleId._id,
-      { isAvailable: true },
-      { new: true }
-    );
+    await Vehicle.findByIdAndUpdate(booking.vehicleId._id, {
+      isAvailable: true,
+    });
 
     res.status(200).json({
       success: true,
@@ -236,6 +234,77 @@ exports.cancelBooking = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to cancel booking",
+      error: err.message,
+    });
+  }
+};
+
+// 7. Get Vendor Previous Bookings (completed/cancelled)
+exports.getVendorPreviousBookings = async (req, res) => {
+  try {
+    const vendorId = req.params.vendorId;
+    const bookings = await Booking.find({
+      vendorId,
+      status: { $in: ["cancelled", "completed"] },
+      statusOfVendor: { $ne: "pending" },
+    })
+      .sort({ createdAt: -1 })
+      .populate("userId", "name email phone")
+      .populate("vehicleId", "name imageUrl");
+
+    res
+      .status(200)
+      .json({ success: true, count: bookings.length, data: bookings });
+  } catch (err) {
+    console.error("Error fetching vendor previous bookings:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch vendor previous bookings",
+      error: err.message,
+    });
+  }
+};
+
+// Complete a ride
+exports.completeRide = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      {
+        statusOfVendor: "rideCompleted",
+        status: "completed",
+        paymentStatus: true,
+        returnStatus: true,
+        endDate: new Date(),
+      },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    await Vehicle.findByIdAndUpdate(
+      booking.vehicleId,
+      { isAvailable: true },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Ride marked as completed successfully",
+      data: booking,
+    });
+  } catch (err) {
+    console.error("Error completing ride:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to complete ride",
       error: err.message,
     });
   }

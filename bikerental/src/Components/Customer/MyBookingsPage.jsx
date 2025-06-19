@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -40,7 +39,7 @@ export default function MyBookingsPage() {
   const cancelBooking = async (bookingId) => {
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/bookings/${bookingId}/cancel`,
+        `http://localhost:8000/api/bookings/user/${bookingId}/cancel`,
         {
           status: "cancelled",
           statusOfVendor: "cancelled",
@@ -58,6 +57,7 @@ export default function MyBookingsPage() {
             : booking
         )
       );
+
       alert("Booking cancelled successfully.");
     } catch (err) {
       console.error("Error cancelling booking:", err);
