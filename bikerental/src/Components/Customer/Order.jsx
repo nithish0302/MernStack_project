@@ -26,6 +26,7 @@ function OrderComponent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
+    vehicleId: vehicleData?.id,
     name: "",
     days: "1",
     phone: "",
@@ -87,11 +88,12 @@ function OrderComponent() {
         vehicleId: vehicleData.id,
         startDate: formData.pickupDate,
         endDate: formData.dropDate,
-        totalAmount: formData.totalPrice,
+        totalAmount: vehicleData.pricePerKm, // Use the base price without calculation
         bookedName: formData.name,
         bookedEmail: formData.email,
         bookedPhone: formData.phone,
         bookedCity: formData.city,
+        paymentMethod: null, // Will be set after ride completion
       };
 
       const response = await axios.post(
@@ -105,7 +107,7 @@ function OrderComponent() {
       );
 
       if (response.data.success) {
-        alert("Booking successful!");
+        alert("Booking request submitted!");
         navigate("/order-confirmation");
       }
     } catch (err) {

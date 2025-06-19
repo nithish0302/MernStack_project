@@ -21,7 +21,6 @@ const bookingSchema = new mongoose.Schema(
     },
     vehicleName: { type: String, required: true },
 
-    // Date and time of ride start and end
     startDate: {
       type: Date,
       required: true,
@@ -39,6 +38,13 @@ const bookingSchema = new mongoose.Schema(
     bookedEmail: { type: String, required: true },
     bookedPhone: { type: String, required: true },
     bookedCity: { type: String, required: true },
+
+    paymentMethod: {
+      type: String,
+      enum: ["QR", "Cash"],
+      default: null,
+      required: false,
+    },
 
     createdAt: { type: Date, default: Date.now },
 
