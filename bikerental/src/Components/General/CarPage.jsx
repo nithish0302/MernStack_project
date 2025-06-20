@@ -245,9 +245,13 @@ function Vehicle({
   selectedPrice,
 }) {
   const filteredVehicles = vehicles.filter((vehicle) => {
+    const userRole = localStorage.getItem("userRole");
+
     if (!vehicle || vehicle.type !== "Car") return false;
 
     // Handle price range filtering
+    if (userRole !== "vendor" && vehicle.isAvailable === false) return false;
+
     let priceMatch = true;
     if (selectedPrice !== "Select Price") {
       if (selectedPrice.endsWith("+")) {
