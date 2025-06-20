@@ -28,15 +28,21 @@ const VendorFrontPage = () => {
 
         for (const booking of bookings) {
           const vehicle = booking.vehicleId;
-          if (vehicle && !seen.has(vehicle._id)) {
+          // Check if booking is accepted and vehicle exists
+          if (
+            booking.statusOfVendor === "accepted" &&
+            vehicle &&
+            !seen.has(vehicle._id)
+          ) {
             seen.add(vehicle._id);
             uniqueVehicles.push({
               id: vehicle._id,
               name: vehicle.name || "Unnamed Vehicle",
               type: vehicle.type || "unknown",
             });
+
+            if (uniqueVehicles.length >= 10) break;
           }
-          if (uniqueVehicles.length >= 10) break;
         }
 
         setRentedVehicles(uniqueVehicles);
