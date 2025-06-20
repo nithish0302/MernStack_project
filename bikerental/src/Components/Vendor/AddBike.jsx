@@ -117,7 +117,7 @@ function AddBike() {
     formData.append("vehicleNumber", bike.vehicleNumber);
 
     try {
-      const response = await fetch("http://localhost:8000/api/vech/bikes", {
+      const response = await fetch("http://localhost:8000/api/vech/", {
         method: "POST",
         body: formData,
       });

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import QRCode from "qrcode";
 import "../../PreviousBookings.css";
+
 import Header from "../General/Header";
 
 export default function PreviousBookings() {
@@ -14,8 +16,21 @@ export default function PreviousBookings() {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [rideKm, setRideKm] = useState(0);
   const [calculatedAmount, setCalculatedAmount] = useState(0);
+  const [qrUrl, setQrUrl] = useState("");
+  const [upiId, setUpiId] = useState("");
 
   const navigate = useNavigate();
+  useEffect(() => {
+    if (selectedBooking) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [selectedBooking]);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -56,67 +71,151 @@ export default function PreviousBookings() {
 
   const handleCompleteRide = async (booking) => {
     try {
+      // Reset all relevant states
       setSelectedBooking(booking);
       setAfterKm("");
       setPaymentMethod("");
       setShowPaymentOptions(false);
+      setQrUrl("");
+      setVehicleData(null);
 
-      const vehicleId = booking.vehicleId?._id || booking.vehicleId;
-
-      if (!vehicleId) {
-        throw new Error("No vehicle ID found in booking");
+      // Validate booking object
+      if (!booking || typeof booking !== "object") {
+        throw new Error("Invalid booking data");
       }
 
+      // Get vehicle ID with basic validation
+      const vehicleId = booking.vehicleId?._id || booking.vehicleId;
+      if (!vehicleId || typeof vehicleId !== "string") {
+        throw new Error("Invalid vehicle ID in booking");
+      }
+
+      // Fetch vehicle data with authorization
       const response = await fetch(
         `http://localhost:8000/api/vech/${vehicleId}`,
         {
           headers: {
-            Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
 
+      // Check response status first
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      // Then check content type
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         const text = await response.text();
-        throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
+        throw new Error(
+          `Server returned unexpected format: ${text.substring(0, 100)}`
+        );
       }
 
       const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to fetch vehicle");
+      // Validate vehicle data structure
+      if (
+        !result.data ||
+        typeof result.data.pricePerKm !== "number" ||
+        typeof result.data.completedKm !== "number"
+      ) {
+        throw new Error("Invalid vehicle data structure received");
       }
 
+      // Set vehicle data if all validations pass
       setVehicleData(result.data);
     } catch (err) {
-      console.error("Error fetching vehicle info:", err);
-      alert(`Error: ${err.message}`);
+      console.error("Error in handleCompleteRide:", err);
+
+      // User-friendly error messages
+      let userMessage = err.message;
+      if (err.message.includes("Failed to fetch")) {
+        userMessage = "Network error. Please check your connection.";
+      } else if (err.message.includes("status")) {
+        userMessage = "Server error. Please try again later.";
+      }
+
+      alert(`Error: ${userMessage}`);
+
+      // Reset states on error
+      setSelectedBooking(null);
       setVehicleData(null);
     }
   };
 
-  const handleProceedToPayment = () => {
-    if (!afterKm || isNaN(afterKm) || afterKm <= 0) {
-      alert("Please enter a valid completed KM");
+  const handleProceedToPayment = async () => {
+    // Validate KM input
+    if (!afterKm || isNaN(afterKm)) {
+      alert("Please enter a valid number for completed KM");
       return;
     }
 
+    const numericAfterKm = Number(afterKm);
     const prevKm = vehicleData?.completedKm || 0;
-    const pricePerKm = vehicleData?.pricePerKm || 0;
-    const drivenKm = afterKm - prevKm;
 
-    if (drivenKm < 0) {
-      alert("Completed KM cannot be less than previous KM!");
+    if (numericAfterKm <= prevKm) {
+      alert("Completed KM must be greater than previous KM reading");
       return;
     }
 
+    // Calculate amount
+    const pricePerKm = vehicleData?.pricePerKm || 0;
+    const drivenKm = numericAfterKm - prevKm;
     const amount = drivenKm * pricePerKm;
 
-    setRideKm(drivenKm);
-    setCalculatedAmount(amount);
-    setShowPaymentOptions(true);
+    try {
+      // Fetch vendor data with error handling
+      const vendorRes = await fetch(
+        `http://localhost:8000/api/vendors/${selectedBooking.vendorId}`, // Changed from /api/vendors/
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!vendorRes.ok) {
+        throw new Error(`Failed to fetch vendor: ${vendorRes.status}`);
+      }
+
+      const vendorData = await vendorRes.json();
+
+      // Update state
+      setRideKm(drivenKm);
+      setCalculatedAmount(amount);
+      setShowPaymentOptions(true);
+
+      // Generate QR if UPI available
+
+      if (vendorData.data.upiId) {
+        const upiUri = `upi://pay?pa=${vendorData.data.upiId}&pn=${
+          selectedBooking.bookedName
+        }&am=${amount.toFixed(2)}&cu=INR`;
+        console.log("Generated UPI URI:", upiUri);
+        setUpiId(vendorData.data.upiId);
+
+        try {
+          const qr = await QRCode.toDataURL(upiUri);
+          setQrUrl(qr);
+        } catch (qrError) {
+          console.error("QR generation failed:", qrError);
+          alert("Couldn't generate QR code. Please use cash payment.");
+          setPaymentMethod("Cash");
+        }
+      } else {
+        alert("Vendor UPI ID not found. Defaulting to cash payment.");
+        setPaymentMethod("Cash");
+      }
+    } catch (error) {
+      console.error("Payment setup error:", error);
+      alert("Error setting up payment options. Defaulting to cash.");
+      setPaymentMethod("Cash");
+      setShowPaymentOptions(true);
+    }
   };
 
   const handleCompletePayment = async () => {
@@ -245,7 +344,11 @@ export default function PreviousBookings() {
 
       {selectedBooking && (
         <div className="popup-overlay">
-          <div className="popup-modal">
+          <div
+            className={`popup-modal ${
+              paymentMethod === "QR" ? "popup-shifted" : ""
+            }`}
+          >
             <span
               className="popup-close-x"
               onClick={() => setSelectedBooking(null)}
@@ -299,10 +402,27 @@ export default function PreviousBookings() {
                   </button>
                 </div>
 
-                {paymentMethod === "QR" && (
+                {paymentMethod === "QR" && qrUrl && (
                   <div className="qr-section">
-                    <img src="/qr-placeholder.png" alt="QR Code" />
-                    <p>Scan the QR code to pay</p>
+                    <div className="qr-card">
+                      <h2>Scan to Pay</h2>
+                      <img src={qrUrl} alt="UPI QR Code" className="qr-image" />
+                      <p>
+                        <strong>Amount:</strong> ₹{calculatedAmount?.toFixed(2)}
+                      </p>
+                      <p className="scan-note">
+                        Use any UPI app (e.g., GPay, PhonePe)
+                      </p>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(upiId);
+                          alert("UPI ID copied to clipboard!");
+                        }}
+                        className="copy-btn"
+                      >
+                        Copy UPI ID
+                      </button>
+                    </div>
                   </div>
                 )}
 

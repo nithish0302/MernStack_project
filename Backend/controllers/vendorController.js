@@ -75,8 +75,58 @@ const updateVendorProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const getVendorById = async (req, res) => {
+  try {
+    const vendorId = req.params.id;
+
+    // Basic ID validation
+    if (!vendorId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vendor ID format",
+      });
+    }
+
+    const vendor = await Vendor.findById(vendorId)
+      .select("name phone companyName address upiId")
+      .lean();
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor not found",
+      });
+    }
+
+    // Decrypt UPI ID if it exists
+    let decryptedUpi = "";
+    if (vendor.upiId) {
+      try {
+        decryptedUpi = decrypt(vendor.upiId);
+        console.log("Decrypted UPI ID:", decryptedUpi);
+      } catch (err) {
+        console.error("Failed to decrypt UPI ID:", err);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...vendor,
+        upiId: decryptedUpi,
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching vendor:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
 module.exports = {
   getVendorProfile,
   updateVendorProfile,
+  getVendorById,
 };

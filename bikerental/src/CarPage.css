@@ -91,3 +91,85 @@
   background: linear-gradient(90deg, #3b82f6, #2563eb);
   transform: scale(1.05);
 }
+
+/* Loading and Error Styles */
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #dc3545;
+}
+
+/* Empty Vendor Message Styles */
+.empty-vendor-message {
+  text-align: center;
+  padding: 3rem;
+  margin: 2rem auto;
+  max-width: 600px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-vendor-message h2 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.empty-vendor-message p {
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.add-bike-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-bike-button:hover {
+  background-color: #218838;
+}
+
+/* Search Bar Styles */
+/* .search-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: #f1f1f1;
+  margin-bottom: 2rem;
+}
+
+.dropdown {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  min-width: 180px;
+}
+
+/* Vehicle Container Styles */
+/* .vehicle-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 0 2rem;
+} */
+
+/* .no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+} */

@@ -46,12 +46,13 @@ export default function VendorRequestsPage() {
         { status }
       );
 
-      setRequests(
-        requests.map((request) =>
-          request._id === bookingId ? response.data.data : request
-        )
+      // Refetch requests after successful status update
+      const vendorId = localStorage.getItem("vendorId");
+      const updated = await axios.get(
+        `http://localhost:8000/api/bookings/vendor/${vendorId}/requests`
       );
 
+      setRequests(updated.data.data || []);
       alert(`Booking ${status} successfully`);
     } catch (err) {
       console.error("Error updating status:", err);

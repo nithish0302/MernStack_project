@@ -2,6 +2,7 @@ const Booking = require("../models/booking");
 const Vehicle = require("../Models/vehicle");
 const Vendor = require("../models/vendor");
 const User = require("../models/user");
+const mongoose = require("mongoose");
 
 // 1. Create Booking
 exports.createBooking = async (req, res) => {
@@ -270,19 +271,34 @@ exports.completeRide = async (req, res) => {
     const { bookingId } = req.params;
     const { afterKm, paymentMethod } = req.body;
 
-    if (!afterKm || isNaN(afterKm)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid afterKm" });
-    }
-
-    if (!paymentMethod || !["QR", "Cash"].includes(paymentMethod)) {
+    // Validate booking ID format
+    if (!mongoose.Types.ObjectId.isValid(bookingId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid or missing payment method. Must be 'QR' or 'Cash'.",
+        message: "Invalid booking ID format",
       });
     }
 
+    // Validate afterKm
+    if (!afterKm || isNaN(afterKm) || afterKm <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid afterKm value. Must be a positive number",
+      });
+    }
+
+    // Validate payment method
+    const validPaymentMethods = ["QR", "Cash"];
+    if (!paymentMethod || !validPaymentMethods.includes(paymentMethod)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid payment method. Must be one of: ${validPaymentMethods.join(
+          ", "
+        )}`,
+      });
+    }
+
+    // Find and validate booking
     const booking = await Booking.findById(bookingId);
     if (!booking) {
       return res.status(404).json({
@@ -291,6 +307,7 @@ exports.completeRide = async (req, res) => {
       });
     }
 
+    // Find and validate vehicle
     const vehicle = await Vehicle.findById(booking.vehicleId);
     if (!vehicle) {
       return res.status(404).json({
@@ -299,12 +316,12 @@ exports.completeRide = async (req, res) => {
       });
     }
 
+    // Calculate ride distance and amount
     const rideKm = afterKm - vehicle.completedKm;
     if (rideKm < 0) {
       return res.status(400).json({
         success: false,
-        message:
-          "Invalid afterKm. It cannot be less than vehicle's current KM.",
+        message: "Invalid afterKm. Cannot be less than vehicle's current KM.",
       });
     }
 
@@ -327,15 +344,19 @@ exports.completeRide = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Ride marked as completed successfully",
-      data: booking,
+      message: "Ride completed successfully",
+      data: {
+        booking,
+        rideKm,
+        totalAmount,
+      },
     });
   } catch (err) {
     console.error("Error completing ride:", err);
     res.status(500).json({
       success: false,
-      message: "Failed to complete ride",
-      error: err.message,
+      message: "Internal server error while completing ride",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 };

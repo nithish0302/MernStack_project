@@ -31,7 +31,7 @@ const VehicleCardComponent = ({ vc, vehicleId }) => {
 
   const handleDeleteClick = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/vech/delete/${vehicleId}`);
+      await axios.delete(`http://localhost:8000/api/vech/${vehicleId}`);
       alert("Vehicle deleted successfully");
       window.location.reload();
     } catch (error) {

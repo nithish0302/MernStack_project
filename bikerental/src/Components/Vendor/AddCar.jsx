@@ -78,7 +78,7 @@ function AddCar() {
     formData.append("isAvailable", car.isAvailable);
 
     try {
-      const response = await fetch("http://localhost:8000/api/vech/cars", {
+      const response = await fetch("http://localhost:8000/api/vech/", {
         method: "POST",
         body: formData,
       });

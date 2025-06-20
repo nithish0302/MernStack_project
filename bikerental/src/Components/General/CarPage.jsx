@@ -3,19 +3,22 @@ import Header from "./Header.jsx";
 import "../../CarPage.css";
 import VehicleCardComponent from "./VechileCardComponenet.jsx";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function CarPage() {
+  const navigate = useNavigate();
   const [selectedMake, setSelectedMake] = useState("Select Make");
   const [selectedModel, setSelectedModel] = useState("Select Model");
   const [selectedPrice, setSelectedPrice] = useState("Select Price");
   const [cars, setCars] = useState([]);
   const [filterOptions, setFilterOptions] = useState({
-    makes: [],
-    models: [],
-    priceRanges: [],
+    makes: ["Select Make"],
+    models: ["Select Model"],
+    priceRanges: ["Select Price"],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isVendorEmpty, setIsVendorEmpty] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,92 +28,121 @@ export default function CarPage() {
 
         let carsResponse;
         if (role === "vendor" && id) {
-          carsResponse = await axios.get(
-            `http://localhost:8000/api/vech/cars/${id}`
-          );
+          try {
+            carsResponse = await axios.get(
+              `http://localhost:8000/api/vech/cars/${id}`
+            );
+
+            const responseData = carsResponse.data;
+            const carsData =
+              responseData.data || responseData.cars || responseData;
+
+            if (
+              !carsData ||
+              (Array.isArray(carsData) && carsData.length === 0) ||
+              (typeof carsData === "object" &&
+                Object.keys(carsData).length === 0)
+            ) {
+              setIsVendorEmpty(true);
+              setLoading(false);
+              return;
+            }
+
+            const processedCars = processCarData(carsData);
+            setCars(processedCars);
+            updateFilterOptions(processedCars);
+          } catch (err) {
+            if (err.response?.status === 404) {
+              setIsVendorEmpty(true);
+              setLoading(false);
+              return;
+            }
+            throw err;
+          }
         } else {
           carsResponse = await axios.get(
             "http://localhost:8000/api/vech/cars",
-            {
-              params: { populate: "vendor" },
-            }
-          );
-        }
-
-        const responseData = carsResponse.data;
-        const carsDataRaw =
-          responseData.data || responseData.cars || responseData;
-        let carsData = Array.isArray(carsDataRaw) ? carsDataRaw : [];
-
-        carsData = carsData.map((car) => ({
-          ...car,
-          make: car.make || "Unknown Make",
-          pricePerKm: Math.round(Number(car?.pricePerKm) || 0),
-        }));
-
-        setCars(carsData);
-
-        const uniqueMakes = [
-          ...new Set(carsData.map((car) => car.make)),
-        ].filter(Boolean);
-        const uniqueModels = [
-          ...new Set(carsData.map((car) => car.name)),
-        ].filter(Boolean);
-
-        const priceList = carsData
-          .map((car) => Number(car?.pricePerKm))
-          .filter(
-            (price) =>
-              typeof price === "number" && !isNaN(price) && isFinite(price)
+            { params: { populate: "vendor" } }
           );
 
-        let priceRanges = ["Select Price"];
-        if (priceList.length > 0) {
-          const minPrice = Math.min(...priceList);
-          const maxPrice = Math.max(...priceList);
-          const generatedRanges = generatePriceRanges(minPrice, maxPrice);
-          priceRanges = ["Select Price", ...generatedRanges];
+          const responseData = carsResponse.data;
+          const carsData =
+            responseData.data || responseData.cars || responseData;
+          const processedCars = processCarData(carsData);
+          setCars(processedCars);
+          updateFilterOptions(processedCars);
         }
-
-        setFilterOptions({
-          makes: ["Select Make", ...uniqueMakes],
-          models: ["Select Model", ...uniqueModels],
-          priceRanges: priceRanges,
-        });
 
         setLoading(false);
       } catch (err) {
-        setError("Failed to load data. Please try again later.");
-        setLoading(false);
         console.error("Error fetching data:", err);
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to load car data. Please try again later."
+        );
+        setLoading(false);
       }
+    };
+
+    const processCarData = (carsData) => {
+      const carsArray = Array.isArray(carsData) ? carsData : [carsData];
+      return carsArray.map((car) => ({
+        ...car,
+        make: car.make || "Unknown Make",
+        name: car.name || "Unknown Model",
+        pricePerKm: Math.round(Number(car?.pricePerKm)) || 0,
+        image: car.image?.replace(/\\/g, "/") || "/default-car.jpg",
+        type: "Car",
+      }));
+    };
+
+    const updateFilterOptions = (processedCars) => {
+      if (!processedCars || processedCars.length === 0) return;
+
+      const uniqueMakes = [
+        ...new Set(processedCars.map((car) => car.make)),
+      ].filter(Boolean);
+      const uniqueModels = [
+        ...new Set(processedCars.map((car) => car.name)),
+      ].filter(Boolean);
+
+      const prices = processedCars
+        .map((car) => car.pricePerKm)
+        .filter((price) => !isNaN(price));
+      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+      const maxPrice = prices.length > 0 ? Math.max(...prices) : 1000;
+      const priceRanges = generatePriceRanges(minPrice, maxPrice);
+
+      setFilterOptions({
+        makes: ["Select Make", ...uniqueMakes],
+        models: ["Select Model", ...uniqueModels],
+        priceRanges: ["Select Price", ...priceRanges],
+      });
     };
 
     fetchData();
   }, []);
 
   const generatePriceRanges = (min, max) => {
-    const MAX_RANGES = 10;
-    if (
-      isNaN(min) ||
-      isNaN(max) ||
-      !isFinite(min) ||
-      !isFinite(max) ||
-      min >= max
-    ) {
-      return [];
-    }
+    const MAX_RANGES = 5;
+    const range = max - min;
+    const step = Math.ceil(range / MAX_RANGES / 100) * 100; // Round to nearest 100
 
     const ranges = [];
-    const step = Math.max(5, Math.ceil((max - min) / MAX_RANGES));
-
-    for (
-      let i = Math.floor(min / step) * step;
-      i < max && ranges.length < MAX_RANGES;
-      i += step
-    ) {
-      ranges.push(`₹${i.toFixed(2)} - ₹${(i + step).toFixed(2)}`);
+    for (let i = min; i < max && ranges.length < MAX_RANGES; i += step) {
+      const upper = Math.min(i + step, max);
+      ranges.push(`₹${i} - ₹${upper}`);
     }
+
+    // Add final range if needed
+    if (
+      ranges.length === 0 ||
+      ranges[ranges.length - 1].split(" - ₹")[1] < max
+    ) {
+      ranges.push(`₹${Math.floor(max / step) * step}+`);
+    }
+
     return ranges;
   };
 
@@ -120,21 +152,38 @@ export default function CarPage() {
   return (
     <>
       <Header />
-      <CarSearchBar
-        selectedMake={selectedMake}
-        setSelectedMake={setSelectedMake}
-        selectedModel={selectedModel}
-        setSelectedModel={setSelectedModel}
-        selectedPrice={selectedPrice}
-        setSelectedPrice={setSelectedPrice}
-        filterOptions={filterOptions}
-      />
-      <Vehicle
-        vehicles={cars}
-        selectedMake={selectedMake}
-        selectedModel={selectedModel}
-        selectedPrice={selectedPrice}
-      />
+      {isVendorEmpty ? (
+        <div className="empty-vendor-message">
+          <h2>You haven't listed any cars yet.</h2>
+          <p>Start earning today by renting out your car!</p>
+          <button
+            className="add-bike-button"
+            onClick={() => navigate("/addcar")}
+          >
+            List Your Car
+          </button>
+        </div>
+      ) : (
+        <>
+          {cars.length > 0 && (
+            <CarSearchBar
+              selectedMake={selectedMake}
+              setSelectedMake={setSelectedMake}
+              selectedModel={selectedModel}
+              setSelectedModel={setSelectedModel}
+              selectedPrice={selectedPrice}
+              setSelectedPrice={setSelectedPrice}
+              filterOptions={filterOptions}
+            />
+          )}
+          <Vehicle
+            vehicles={cars}
+            selectedMake={selectedMake}
+            selectedModel={selectedModel}
+            selectedPrice={selectedPrice}
+          />
+        </>
+      )}
     </>
   );
 }
@@ -195,29 +244,30 @@ function Vehicle({
   selectedModel,
   selectedPrice,
 }) {
-  const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
-
-  const filteredVehicles = safeVehicles.filter((vehicle) => {
+  const filteredVehicles = vehicles.filter((vehicle) => {
     if (!vehicle || vehicle.type !== "Car") return false;
 
-    let minPrice = 0;
-    let maxPrice = Infinity;
-
+    // Handle price range filtering
+    let priceMatch = true;
     if (selectedPrice !== "Select Price") {
-      const priceRange = selectedPrice.match(/\d+\.?\d*/g);
-      if (priceRange && priceRange.length === 2) {
-        minPrice = parseFloat(priceRange[0]);
-        maxPrice = parseFloat(priceRange[1]);
+      if (selectedPrice.endsWith("+")) {
+        const minPrice = parseInt(selectedPrice.match(/\d+/)[0]);
+        priceMatch = vehicle.pricePerKm >= minPrice;
+      } else {
+        const priceRange = selectedPrice.match(/\d+/g);
+        if (priceRange && priceRange.length >= 2) {
+          const minPrice = parseInt(priceRange[0]);
+          const maxPrice = parseInt(priceRange[1]);
+          priceMatch =
+            vehicle.pricePerKm >= minPrice && vehicle.pricePerKm <= maxPrice;
+        }
       }
     }
-
-    const vehiclePrice = Number(vehicle?.pricePerKm) || 0;
 
     return (
       (selectedMake === "Select Make" || vehicle.make === selectedMake) &&
       (selectedModel === "Select Model" || vehicle.name === selectedModel) &&
-      vehiclePrice >= minPrice &&
-      vehiclePrice <= maxPrice
+      priceMatch
     );
   });
 
@@ -230,15 +280,18 @@ function Vehicle({
             vehicleId={vehicle._id || vehicle.id}
             vc={{
               ...vehicle,
-              imageUrl:
-                vehicle.image?.replace(/\\/g, "/") || "/default-car.jpg",
-              make: vehicle.make || "Unknown Make",
+              imageUrl: vehicle.image,
+              make: vehicle.make,
               pricePerKm: vehicle.pricePerKm,
             }}
           />
         ))
       ) : (
-        <p className="no-results">No cars match your search criteria.</p>
+        <p className="no-results">
+          {vehicles.length === 0
+            ? "No cars available at the moment."
+            : "No cars match your search criteria."}
+        </p>
       )}
     </div>
   );
