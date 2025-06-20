@@ -41,7 +41,7 @@ const bookingSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["QR", "Cash"],
+      enum: ["QR", "Cash", null],
       default: null,
       required: false,
     },
