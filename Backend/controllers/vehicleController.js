@@ -247,6 +247,86 @@ const deleteVehicle = async (req, res) => {
   }
 };
 
+// Get vehicle by ID
+const getVehicleById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vehicle ID format",
+      });
+    }
+
+    const vehicle = await Vehicle.findById(id).populate(
+      "vendor",
+      "name email phone"
+    );
+
+    if (!vehicle) {
+      return res.status(404).json({
+        success: false,
+        message: "Vehicle not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: vehicle,
+    });
+  } catch (err) {
+    console.error("Error fetching vehicle:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching vehicle",
+    });
+  }
+};
+
+// Update vehicle
+const updateVehicle = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vehicle ID",
+      });
+    }
+
+    if (updates.pricePerKm) {
+      updates.pricePerKm = validateAndConvertPrice(updates.pricePerKm);
+    }
+
+    const updatedVehicle = await Vehicle.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedVehicle) {
+      return res.status(404).json({
+        success: false,
+        message: "Vehicle not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Vehicle updated successfully",
+      data: updatedVehicle,
+    });
+  } catch (err) {
+    console.error("Error updating vehicle:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update vehicle",
+    });
+  }
+};
+
 module.exports = {
   addVehicle,
   getCars,
@@ -255,4 +335,6 @@ module.exports = {
   getCarsByVendor,
   getBikesByVendor,
   deleteVehicle,
+  getVehicleById,
+  updateVehicle,
 };

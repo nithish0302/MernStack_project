@@ -265,23 +265,25 @@ exports.getVendorPreviousBookings = async (req, res) => {
   }
 };
 
-// Complete a ride
 exports.completeRide = async (req, res) => {
   try {
     const { bookingId } = req.params;
+    const { afterKm, paymentMethod } = req.body;
 
-    const booking = await Booking.findByIdAndUpdate(
-      bookingId,
-      {
-        statusOfVendor: "rideCompleted",
-        status: "completed",
-        paymentStatus: true,
-        returnStatus: true,
-        endDate: new Date(),
-      },
-      { new: true }
-    );
+    if (!afterKm || isNaN(afterKm)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid afterKm" });
+    }
 
+    if (!paymentMethod || !["QR", "Cash"].includes(paymentMethod)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing payment method. Must be 'QR' or 'Cash'.",
+      });
+    }
+
+    const booking = await Booking.findById(bookingId);
     if (!booking) {
       return res.status(404).json({
         success: false,
@@ -289,11 +291,39 @@ exports.completeRide = async (req, res) => {
       });
     }
 
-    await Vehicle.findByIdAndUpdate(
-      booking.vehicleId,
-      { isAvailable: true },
-      { new: true }
-    );
+    const vehicle = await Vehicle.findById(booking.vehicleId);
+    if (!vehicle) {
+      return res.status(404).json({
+        success: false,
+        message: "Vehicle not found",
+      });
+    }
+
+    const rideKm = afterKm - vehicle.completedKm;
+    if (rideKm < 0) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid afterKm. It cannot be less than vehicle's current KM.",
+      });
+    }
+
+    const totalAmount = rideKm * vehicle.pricePerKm;
+
+    // Update booking
+    booking.statusOfVendor = "rideCompleted";
+    booking.status = "completed";
+    booking.paymentStatus = true;
+    booking.returnStatus = true;
+    booking.endDate = new Date();
+    booking.totalAmount = totalAmount;
+    booking.paymentMethod = paymentMethod;
+    await booking.save();
+
+    // Update vehicle
+    vehicle.completedKm = afterKm;
+    vehicle.isAvailable = true;
+    await vehicle.save();
 
     res.status(200).json({
       success: true,

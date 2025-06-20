@@ -6,7 +6,11 @@ const VendorSchema = new mongoose.Schema(
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
     phone: { type: String, default: "" },
-    gender: { type: String, enum: ["male", "female", "other",""], default: "" },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other", ""],
+      default: "",
+    },
     address: { type: String, default: "" },
     city: { type: String, default: "" },
     state: { type: String, default: "" },
@@ -17,6 +21,7 @@ const VendorSchema = new mongoose.Schema(
     bankAccountNumber: { type: String, default: "" },
     isVerified: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
+    upiId: { type: String, default: "" },
   },
   { collection: "Vendor" }
 );

@@ -8,7 +8,7 @@ export default function VendorProfile() {
   const [vendor, setVendor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editMode, setEditMode] = useState(false); // Initially false, will be true when user clicks "Edit Profile"
+  const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,6 +22,7 @@ export default function VendorProfile() {
     aadharNumber: "",
     panNumber: "",
     bankAccountNumber: "",
+    upiId: "",
   });
 
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ export default function VendorProfile() {
           aadharNumber: response.data.aadharNumber || "",
           panNumber: response.data.panNumber || "",
           bankAccountNumber: response.data.bankAccountNumber || "",
+          upiId: response.data.upiId || "",
         });
         setLoading(false);
       } catch (err) {
@@ -84,26 +86,8 @@ export default function VendorProfile() {
         }
       );
 
-      // Update the vendor state with the updated profile data
-      setVendor(response.data);
-
-      // Update the formData state with the updated data from the response
-      setFormData({
-        name: response.data.name || "",
-        email: response.data.email || "",
-        phone: response.data.phone || "",
-        gender: response.data.gender || "",
-        address: response.data.address || "",
-        city: response.data.city || "",
-        state: response.data.state || "",
-        pincode: response.data.pincode || "",
-        companyName: response.data.companyName || "",
-        aadharNumber: response.data.aadharNumber || "",
-        panNumber: response.data.panNumber || "",
-        bankAccountNumber: response.data.bankAccountNumber || "",
-      });
-
-      setEditMode(false); // Switch back to the view mode
+      setVendor(response.data.data || response.data);
+      setEditMode(false);
       alert("Profile updated successfully!");
     } catch (err) {
       alert(err.response?.data?.message || "Failed to update profile");
@@ -125,9 +109,10 @@ export default function VendorProfile() {
         aadharNumber: vendor.aadharNumber || "",
         panNumber: vendor.panNumber || "",
         bankAccountNumber: vendor.bankAccountNumber || "",
+        upiId: vendor.upiId || "",
       });
     }
-    setEditMode(false); // Exit edit mode
+    setEditMode(false);
   };
 
   if (loading) return <div className="loading">Loading profile...</div>;
@@ -207,7 +192,6 @@ export default function VendorProfile() {
                   onChange={handleInputChange}
                 />
               </div>
-
               <div className="user-form-group">
                 <label>State</label>
                 <input
@@ -217,7 +201,6 @@ export default function VendorProfile() {
                   onChange={handleInputChange}
                 />
               </div>
-
               <div className="user-form-group">
                 <label>Pincode</label>
                 <input
@@ -269,6 +252,16 @@ export default function VendorProfile() {
               />
             </div>
 
+            <div className="user-form-group">
+              <label>UPI ID</label>
+              <input
+                type="text"
+                name="upiId"
+                value={formData.upiId}
+                onChange={handleInputChange}
+              />
+            </div>
+
             <div className="user-form-actions">
               <button
                 type="button"
@@ -291,8 +284,12 @@ export default function VendorProfile() {
 
             <div className="user-profile-details">
               <div className="user-detail-row">
+                <span>Name:</span>
+                <span>{vendor?.name || "-"}</span>
+              </div>
+              <div className="user-detail-row">
                 <span>Email:</span>
-                <span>{vendor?.email}</span>
+                <span>{vendor?.email || "-"}</span>
               </div>
               <div className="user-detail-row">
                 <span>Phone:</span>
@@ -319,20 +316,24 @@ export default function VendorProfile() {
                 <span>{vendor?.pincode || "-"}</span>
               </div>
               <div className="user-detail-row">
-                <span>Company:</span>
+                <span>Company Name:</span>
                 <span>{vendor?.companyName || "-"}</span>
               </div>
               <div className="user-detail-row">
-                <span>Aadhar No:</span>
+                <span>Aadhar Number:</span>
                 <span>{vendor?.aadharNumber || "-"}</span>
               </div>
               <div className="user-detail-row">
-                <span>PAN No:</span>
+                <span>PAN Number:</span>
                 <span>{vendor?.panNumber || "-"}</span>
               </div>
               <div className="user-detail-row">
-                <span>Bank Account:</span>
+                <span>Bank Account Number:</span>
                 <span>{vendor?.bankAccountNumber || "-"}</span>
+              </div>
+              <div className="user-detail-row">
+                <span>UPI ID:</span>
+                <span>{vendor?.upiId || "-"}</span>
               </div>
             </div>
 

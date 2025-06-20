@@ -17,6 +17,7 @@ const VendorRequiredFields = () => {
     aadharNumber: "",
     panNumber: "",
     bankAccountNumber: "",
+    upiId: "",
   });
 
   const [error, setError] = useState(null);
@@ -38,6 +39,7 @@ const VendorRequiredFields = () => {
           ...prev,
           name: vendor.name,
           email: vendor.email,
+          upiId: vendor.upiId || "",
         }));
       } catch (err) {
         setError("Failed to load vendor information");
@@ -184,6 +186,17 @@ const VendorRequiredFields = () => {
             name="bankAccountNumber"
             value={formData.bankAccountNumber}
             onChange={handleChange}
+          />
+        </div>
+        <div className="reqven-input-group">
+          <label>UPI ID:</label>
+          <input
+            type="text"
+            name="upiId"
+            value={formData.upiId}
+            onChange={handleChange}
+            placeholder="e.g., yourname@ybl"
+            required
           />
         </div>
 

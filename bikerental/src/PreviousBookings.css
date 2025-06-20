@@ -1,5 +1,4 @@
-/* PreviousBookings.css */
-
+/* Main Container */
 .previous-bookings-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -16,20 +15,21 @@
   color: #333;
 }
 
-.back-button {
-  margin-bottom: 1.5rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
+/* Loading / Error / Empty States */
+.loading,
+.error,
+.no-bookings {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  color: #555;
 }
 
-.back-button:hover {
-  background-color: #0056b3;
+.error {
+  color: #d9534f;
 }
 
+/* Booking List */
 .bookings-list {
   list-style-type: none;
   padding: 0;
@@ -48,19 +48,7 @@
   color: #007bff;
 }
 
-.loading,
-.error,
-.no-bookings {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-top: 2rem;
-  color: #555;
-}
-
-.error {
-  color: #d9534f;
-}
-
+/* Action Buttons */
 .action-button {
   color: white;
   padding: 8px 15px;
@@ -69,7 +57,6 @@
   cursor: pointer;
   font-size: 0.95em;
   transition: background-color 0.3s ease, transform 0.2s ease;
-
   display: block;
   width: fit-content;
   margin: 10px auto 0 280px;
@@ -91,30 +78,32 @@
   background-color: #5936a1;
 }
 
-.ride-completed-label {
+/* Status Labels */
+.ride-completed-label,
+.ride-cancelled-label {
   display: block;
-  margin: 10px 310px 0 280px;
-  padding: 6px 12px;
-  background-color: #17a2b8;
+  padding: 10px;
   color: white;
   border-radius: 6px;
   font-size: 0.9em;
   font-weight: bold;
+  margin-top: 10px;
+  margin-left: 280px;
+}
+
+.ride-completed-label {
+  background-color: #17a2b8;
+  margin-left: 280px;
+  margin-right: 320px;
 }
 
 .ride-cancelled-label {
-  display: block;
-  margin: 10px 300px 0 310px;
-  padding: 6px 12px;
   background-color: #dc3545;
-  color: white;
-  border-radius: 6px;
-  font-size: 0.9em;
-  font-weight: bold;
-  padding: 10px;
+  margin-left: 310px;
+  margin-right: 310px;
 }
 
-/* Popup Overlay */
+/* Popup Modal Overlay */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -122,22 +111,41 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* Modal Box */
 .popup-modal {
-  background: #fff;
-  padding: 30px;
-  width: 90%;
-  max-width: 400px;
-  margin: 80px auto;
-  border-radius: 8px;
   position: relative;
-  animation: fadeIn 0.3s ease-in-out;
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  animation: popupFadeIn 0.3s ease;
   font-family: "Quicksand", sans-serif;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Close X Button */
+.popup-close-x {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.popup-close-x:hover {
+  color: red;
+}
+
+/* Modal Input */
 .popup-modal input {
   width: 100%;
   padding: 12px;
@@ -147,64 +155,71 @@
   border: 1px solid #ccc;
 }
 
+/* Buttons inside Modal */
 .proceed-btn,
-.complete-btn,
-.payment-btn,
-.close-btn {
-  display: block;
+.complete-btn {
   margin-top: 15px;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  width: 100%;
+  color: white;
 }
 
 .proceed-btn {
-  background: #3498db;
-  color: #fff;
-  border: none;
+  background-color: #3498db;
 }
 
 .complete-btn {
-  background: #2ecc71;
-  color: white;
-  border: none;
+  background-color: #2ecc71;
 }
 
-.close-btn {
-  background: #e74c3c;
-  color: white;
-  border: none;
-}
-
+/* Payment Option Buttons */
 .payment-options {
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
-  margin-top: 15px;
   gap: 10px;
 }
 
 .payment-btn {
   flex: 1;
-  background: #f0f0f0;
+  padding: 10px 15px;
+  background-color: #f0f0f0;
   border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
 .payment-btn.active {
   border-color: #3498db;
   background: #dceeff;
+  color: #000;
 }
 
+/* QR Code Display */
 .qr-section {
-  text-align: center;
   margin-top: 15px;
+  text-align: center;
 }
 
 .qr-section img {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
+}
+
+/* Animation */
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

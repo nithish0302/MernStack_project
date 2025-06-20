@@ -1,13 +1,20 @@
 const Vendor = require("../models/vendor");
-
+const { encrypt, decrypt } = require("../utils/encryptor");
 // GET vendor profile
 const getVendorProfile = async (req, res) => {
   try {
-    // Get vendor ID from the decoded JWT (via middleware)
     const vendor = await Vendor.findById(req.user.id).select("-password");
 
     if (!vendor) {
       return res.status(404).json({ message: "Vendor not found" });
+    }
+    if (vendor.upiId && typeof vendor.upiId === "string") {
+      try {
+        vendor.upiId = decrypt(vendor.upiId);
+      } catch (err) {
+        console.error("Failed to decrypt UPI ID:", err.message);
+        vendor.upiId = ""; // fallback to empty string if decryption fails
+      }
     }
 
     res.status(200).json(vendor);
@@ -33,15 +40,23 @@ const updateVendorProfile = async (req, res) => {
       "aadharNumber",
       "panNumber",
       "bankAccountNumber",
+      "upiId",
     ];
 
     allowedFields.forEach((field) => {
       if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
+        if (field === "gender" && typeof req.body[field] === "string") {
+          updates[field] = req.body[field].toLowerCase();
+        } else if (field === "upiId" && typeof req.body[field] === "string") {
+          updates[field] = encrypt(req.body[field]);
+        } else {
+          updates[field] = req.body[field];
+        }
       }
     });
 
-    // Update vendor profile using ID from JWT
+    console.log("Updating vendor with:", updates);
+
     const vendor = await Vendor.findByIdAndUpdate(req.user.id, updates, {
       new: true,
       runValidators: true,
