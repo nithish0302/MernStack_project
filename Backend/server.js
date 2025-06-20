@@ -49,7 +49,7 @@ mongoose
   .then(() => console.log(" MongoDB Connected to 'bikerental'"))
   .catch((err) => console.error(" MongoDB Connection Error:", err));
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on http://localhost:${PORT}`)
 );
