@@ -12,6 +12,7 @@ const bookingRoutes = require("./routes/bookingRoutes");
 const userRoutes = require("./routes/userRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 const app = express();
+module.exports = app;
 
 app.use(cors());
 app.use(express.json());

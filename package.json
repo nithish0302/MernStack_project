@@ -28,5 +28,9 @@
     "url": "https://github.com/nithish0302/MernStack_project/issues"
   },
   "homepage": "https://github.com/nithish0302/MernStack_project#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "jest": "^30.0.2",
+    "supertest": "^7.1.1"
+  }
 }
